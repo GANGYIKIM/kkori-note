@@ -24,7 +24,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko" className={`${notoSansKr.variable} h-full antialiased`}>
       <body className="min-h-dvh">
-        <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col">{children}</div>
+        <div className="flex min-h-dvh w-full flex-col">{children}</div>
       </body>
     </html>
   );

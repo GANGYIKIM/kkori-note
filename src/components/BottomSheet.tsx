@@ -6,6 +6,7 @@ import { CloseIcon } from "./Icons";
 /**
  * 아래에서 올라오는 시트. full이면 화면 전체(채팅), 아니면 내용 높이만큼(칩 수정).
  * stickToBottom이면 열 때와 내용이 늘 때 맨 아래로 내린다(채팅의 최근 대화).
+ * className은 바깥 틀에 붙는다(예: 넓은 화면에서 숨기기).
  */
 export function BottomSheet({
   open,
@@ -13,6 +14,7 @@ export function BottomSheet({
   onClose,
   full = false,
   stickToBottom = false,
+  className = "",
   children,
   footer,
 }: {
@@ -21,6 +23,7 @@ export function BottomSheet({
   onClose: () => void;
   full?: boolean;
   stickToBottom?: boolean;
+  className?: string;
   children: ReactNode;
   footer?: ReactNode;
 }) {
@@ -40,7 +43,7 @@ export function BottomSheet({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-center" role="dialog" aria-modal="true" aria-label={title}>
+    <div className={`fixed inset-0 z-50 flex justify-center ${className}`} role="dialog" aria-modal="true" aria-label={title}>
       <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-black/40" />
       <div
         className={`relative mt-auto flex w-full max-w-md flex-col bg-background shadow-xl ${

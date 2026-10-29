@@ -15,6 +15,7 @@ import {
 import { AppHeader } from "./AppHeader";
 import { BottomSheet } from "./BottomSheet";
 import { ChatComposer, ChatLauncher } from "./chat/ChatComposer";
+import { ChatPanel } from "./chat/ChatPanel";
 import { ChatView } from "./chat/ChatView";
 import { EmptyState } from "./EmptyState";
 import { EntryEditSheet } from "./EntryEditSheet";
@@ -26,7 +27,7 @@ const INITIAL_MESSAGES: ChatMessage[] = MAIN_CHAT_CASE_IDS.flatMap(
 );
 
 /**
- * 메인 화면 (PRD R0): 기록 목록 + 진행 중 띠 + 하단 입력창 → 채팅.
+ * 메인 화면 (PRD R0): 기록 목록 + 진행 중 띠 + 하단 입력창 → 채팅. 넓은 화면은 기록 목록과 채팅을 나란히 둔다.
  * 지금은 가짜 데이터로 동작하는 화면 미리보기다. 저장소·파싱·상담 로직은 다음 단계에서 붙인다.
  */
 export function MainScreen() {
@@ -87,52 +88,69 @@ export function MainScreen() {
     ]);
   }
 
+  const chatTitle = `${MOCK_DOG.name}와 대화`;
+  const chat = (
+    <ChatView
+      messages={messages}
+      entries={chatEntries}
+      nowIso={MOCK_NOW}
+      timeZone={MOCK_TIME_ZONE}
+      actions={{ onEdit: setEditing, onPick: pick, onUndo: undo }}
+    />
+  );
+
+  // 넓은 화면(lg 이상)은 왼쪽 기록 목록 + 오른쪽 채팅 패널, 좁은 화면은 입력창을 누르면 채팅 시트가 열린다
   return (
-    <div className="flex min-h-dvh flex-col px-4">
-      <div className="sticky top-0 z-10 -mx-4 bg-background/95 px-4 backdrop-blur">
-        <AppHeader dogName={MOCK_DOG.name} />
+    <div className="lg:grid lg:h-dvh lg:grid-cols-[minmax(0,1fr)_420px]">
+      <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 lg:min-h-0 lg:max-w-none lg:overflow-y-auto">
+        <div className="sticky top-0 z-10 -mx-4 bg-background/95 px-4 backdrop-blur">
+          <div className="lg:mx-auto lg:max-w-2xl">
+            <AppHeader dogName={MOCK_DOG.name} />
+          </div>
+        </div>
+
+        <main className="w-full flex-1 space-y-4 pb-28 pt-2 lg:mx-auto lg:max-w-2xl lg:pb-8">
+          <OngoingEpisodeBar episodes={ongoing} nowIso={MOCK_NOW} onClose={closeEpisode} />
+          {entries.length === 0 ? (
+            <EmptyState
+              title="아직 기록이 없어요"
+              description={'아래 입력창에 이렇게 적어 보세요.\n"방금 배변했는데 무른 편이야"'}
+              action={
+                <button
+                  type="button"
+                  onClick={() => setEntries(MOCK_ENTRIES)}
+                  className="h-10 rounded-xl bg-accent/10 px-4 text-sm font-bold text-accent"
+                >
+                  샘플 기록 불러오기
+                </button>
+              }
+            />
+          ) : (
+            <EntryList entries={entries} nowIso={MOCK_NOW} timeZone={MOCK_TIME_ZONE} onSelect={setEditing} />
+          )}
+        </main>
+
+        <div className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md bg-gradient-to-t from-background via-background to-background/0 px-4 pb-4 pt-6 lg:hidden">
+          <ChatLauncher onOpen={() => setChatOpen(true)} />
+        </div>
       </div>
 
-      <main className="flex-1 space-y-4 pb-28 pt-2">
-        <OngoingEpisodeBar episodes={ongoing} nowIso={MOCK_NOW} onClose={closeEpisode} />
-        {entries.length === 0 ? (
-          <EmptyState
-            title="아직 기록이 없어요"
-            description={'아래 입력창에 이렇게 적어 보세요.\n"방금 배변했는데 무른 편이야"'}
-            action={
-              <button
-                type="button"
-                onClick={() => setEntries(MOCK_ENTRIES)}
-                className="h-10 rounded-xl bg-accent/10 px-4 text-sm font-bold text-accent"
-              >
-                샘플 기록 불러오기
-              </button>
-            }
-          />
-        ) : (
-          <EntryList entries={entries} nowIso={MOCK_NOW} timeZone={MOCK_TIME_ZONE} onSelect={setEditing} />
-        )}
-      </main>
-
-      <div className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md bg-gradient-to-t from-background via-background to-background/0 px-4 pb-4 pt-6">
-        <ChatLauncher onOpen={() => setChatOpen(true)} />
-      </div>
+      <aside className="hidden min-h-0 border-l border-border lg:block">
+        <ChatPanel title={chatTitle} footer={<ChatComposer onSend={send} />}>
+          {chat}
+        </ChatPanel>
+      </aside>
 
       <BottomSheet
         open={chatOpen}
-        title={`${MOCK_DOG.name}와 대화`}
+        title={chatTitle}
         onClose={() => setChatOpen(false)}
         full
         stickToBottom
+        className="lg:hidden"
         footer={<ChatComposer onSend={send} autoFocus />}
       >
-        <ChatView
-          messages={messages}
-          entries={chatEntries}
-          nowIso={MOCK_NOW}
-          timeZone={MOCK_TIME_ZONE}
-          actions={{ onEdit: setEditing, onPick: pick, onUndo: undo }}
-        />
+        {chat}
       </BottomSheet>
 
       <EntryEditSheet

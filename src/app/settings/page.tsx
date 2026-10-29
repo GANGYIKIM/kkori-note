@@ -4,7 +4,7 @@ import { ProfileForm } from "@/components/ProfileForm";
 
 export default function SettingsPage() {
   return (
-    <div className="px-4 pb-10">
+    <div className="mx-auto w-full max-w-md px-4 pb-10">
       <header className="flex h-14 items-center gap-1">
         <Link href="/" aria-label="뒤로" className="-ml-2 rounded-lg p-2 text-muted hover:bg-surface">
           <BackIcon />

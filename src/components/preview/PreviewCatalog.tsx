@@ -77,7 +77,7 @@ export function PreviewCatalog() {
   const [draft, setDraft] = useState<LogEntry>(map["e-choco"]);
 
   return (
-    <div className="px-4 pb-20">
+    <div className="mx-auto w-full max-w-md px-4 pb-20">
       <header className="sticky top-0 z-10 -mx-4 flex h-14 items-center gap-1 bg-background/95 px-4 backdrop-blur">
         <Link href="/" aria-label="메인으로" className="-ml-2 rounded-lg p-2 text-muted hover:bg-surface">
           <BackIcon />
