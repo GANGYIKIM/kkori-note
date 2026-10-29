@@ -1,0 +1,95 @@
+@import "tailwindcss";
+
+/*
+ * 디자인 토큰. 흰 바탕 + 회색 중립색 위에 주황 강조색, 기록 종류마다 다른 색을 연하게 깐다.
+ * (참고: 채널톡 Bezier 디자인 시스템의 톤)
+ * 새 토큰은 :root, 다크 모드, @theme inline 세 곳을 함께 고친다.
+ */
+:root {
+  --background: #ffffff;
+  --foreground: #242428;
+  --surface: #f7f7f8;
+  --surface-strong: #efeff1;
+  --muted: #76767c;
+  --border: #ebebed;
+  --accent: #e67f2b;
+  --accent-foreground: #ffffff;
+
+  /* 위험 등급 */
+  --danger: #d23f4a;
+  --warning: #b98900;
+  --success: #1a8a45;
+
+  /* 기록 종류 (태그 글자색, 배경은 같은 색을 10%로) */
+  --kind-poop: #94622f;
+  --kind-meal: #1a8a45;
+  --kind-snack: #b07f00;
+  --kind-walk: #0f8a80;
+  --kind-picked-up: #c93a76;
+  --kind-limp: #7a4fd6;
+  --kind-seizure: #d23f4a;
+  --kind-thunder: #3b5bcc;
+  --kind-note: #6b6b72;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #1d1d20;
+    --foreground: #f0f0f2;
+    --surface: #26262a;
+    --surface-strong: #303035;
+    --muted: #a3a3aa;
+    --border: #36363b;
+    --accent: #f0914d;
+    --accent-foreground: #1d1d20;
+
+    --danger: #f07078;
+    --warning: #e0b53a;
+    --success: #4cc27a;
+
+    --kind-poop: #d29a63;
+    --kind-meal: #4cc27a;
+    --kind-snack: #e0b53a;
+    --kind-walk: #3cc4b8;
+    --kind-picked-up: #f07aa9;
+    --kind-limp: #a98af0;
+    --kind-seizure: #f07078;
+    --kind-thunder: #7d97f0;
+    --kind-note: #a3a3aa;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+
+  --color-kind-poop: var(--kind-poop);
+  --color-kind-meal: var(--kind-meal);
+  --color-kind-snack: var(--kind-snack);
+  --color-kind-walk: var(--kind-walk);
+  --color-kind-picked-up: var(--kind-picked-up);
+  --color-kind-limp: var(--kind-limp);
+  --color-kind-seizure: var(--kind-seizure);
+  --color-kind-thunder: var(--kind-thunder);
+  --color-kind-note: var(--kind-note);
+
+  --font-sans: var(--font-noto-sans-kr), -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic",
+    system-ui, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+}
