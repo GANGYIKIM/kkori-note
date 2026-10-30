@@ -44,5 +44,6 @@ next-env.d.ts
 !.env.example
 
 # 개인 작업 문서
-/docs/PLAN.md
+/docs/plan.md
+/docs/log.md
 .claude/*.local.md
