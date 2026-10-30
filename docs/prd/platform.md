@@ -56,6 +56,7 @@
 | 로컬 저장 | IndexedDB (Dexie 등 얇은 래퍼) | 저장소 인터페이스 뒤에 숨김 |
 | 상태 관리 | React 기본 상태 | 전역 상태 라이브러리는 쓰지 않는다(공유 데이터의 원본은 IndexedDB). 근거는 `docs/adr/0003-no-global-state-library.md` |
 | 테스트 | Vitest | 집계, 시각 파서, 표현 사전, 안전 평가 케이스 |
+| 자동 검사 | husky + GitHub Actions | 커밋 전과 push 후에 lint·typecheck·test. 근거는 `docs/adr/0005-precommit-and-ci-checks.md` |
 | 배포 | Vercel + GitHub 연동 | R9 참고 |
 
 - GraphQL/Apollo는 사용하지 않는다(서버 데이터 없음, Route Handler로 충분).
