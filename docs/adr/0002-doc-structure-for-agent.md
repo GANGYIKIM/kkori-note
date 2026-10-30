@@ -61,7 +61,7 @@
 - 기록 위치가 정해졌다. 제품 동작이 바뀌면 PRD + changelog, 기능 단위 작업이 끝나면 dev-log에 쓴다. 기술 결정은 세 조건 중 하나에 해당하면 ADR에 쓴다. 조건은 되돌리기 비쌈, 대안을 둘 이상 비교함, CLAUDE.md 규칙의 변경·예외다. dev-log 템플릿의 "계획" 칸은 승인 템플릿으로도 쓰고, "영향받는 지표"와 "결정할 것" 칸을 더했다.
 - 맞바꾼 것: 문서 파일 수가 늘었다(PRD 1개 → 8개). 경로 규칙은 해당 경로의 파일을 다룰 때 읽혀서, 계획 단계나 새 파일을 처음 만들 때는 아직 읽히지 않았을 수 있다.
 - 그 위험을 줄이려고 후속 작업을 정했다. 모든 `src/app/api/**/route.ts`가 `guardLlmRequest`를 부르는지 검사하는 테스트, `server-only`/`client-only` 도입 제안(스택 밖이라 별도 승인 필요), `src/lib/mock` import를 막는 ESLint 규칙(메인을 실제 저장소로 바꾼 뒤)이다.
-- 남은 불일치: `docs/prd/platform.md` 기술 스택 표의 "필요 시 Zustand"와 CLAUDE.md의 "전역 상태 라이브러리는 쓰지 않는다"가 서로 다르다. 아직 정하지 않았다.
+- 남은 불일치: `docs/prd/platform.md` 기술 스택 표의 "필요 시 Zustand"와 CLAUDE.md의 "전역 상태 라이브러리는 쓰지 않는다"가 서로 다르다. → ADR-0003에서 쓰지 않는 쪽으로 정해 해결했다.
 
 ## Re-evaluation Triggers
 

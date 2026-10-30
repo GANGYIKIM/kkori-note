@@ -54,7 +54,7 @@
 | 스키마/값 목록 | Zod | LLM 출력 검증, 칩 UI, 집계가 같은 값 목록을 참조 |
 | LLM | OpenAI SDK (구조화 출력) | 파싱 `gpt-6-luna`(추론 none), 상담 `gpt-6.1-terra`(추론 low). 근거는 `docs/adr/0001-llm-model-selection.md`. 모델명은 환경변수로만 지정 |
 | 로컬 저장 | IndexedDB (Dexie 등 얇은 래퍼) | 저장소 인터페이스 뒤에 숨김 |
-| 상태 관리 | React 기본 상태, 필요 시 Zustand | |
+| 상태 관리 | React 기본 상태 | 전역 상태 라이브러리는 쓰지 않는다(공유 데이터의 원본은 IndexedDB). 근거는 `docs/adr/0003-no-global-state-library.md` |
 | 테스트 | Vitest | 집계, 시각 파서, 표현 사전, 안전 평가 케이스 |
 | 배포 | Vercel + GitHub 연동 | R9 참고 |
 
