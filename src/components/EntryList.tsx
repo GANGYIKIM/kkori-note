@@ -20,7 +20,9 @@ export function EntryList({
     <div className="space-y-6">
       {groups.map((group) => (
         <section key={group.dateKey} aria-label={formatDateHeading(group.dateKey, nowIso, timeZone)}>
-          <h2 className="mb-1 px-3 text-sm font-bold text-muted">{formatDateHeading(group.dateKey, nowIso, timeZone)}</h2>
+          <h2 className="mb-1 px-3 text-sm font-bold text-muted">
+            {formatDateHeading(group.dateKey, nowIso, timeZone)}
+          </h2>
           <ul>
             {group.items.map((entry) => (
               <li key={entry.id}>

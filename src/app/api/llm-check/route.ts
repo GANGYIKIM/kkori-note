@@ -31,7 +31,8 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         error: "not_configured",
-        message: "서버에 OPENAI_API_KEY 또는 사용할 모델(OPENAI_MODEL_PARSE / OPENAI_MODEL_CONSULT)이 설정되지 않았어요.",
+        message:
+          "서버에 OPENAI_API_KEY 또는 사용할 모델(OPENAI_MODEL_PARSE / OPENAI_MODEL_CONSULT)이 설정되지 않았어요.",
       },
       { status: 503 },
     );
@@ -51,6 +52,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ reply: completion.choices[0]?.message?.content ?? "", purpose });
   } catch (error) {
     console.error("[llm-check] OpenAI 호출 실패", error instanceof Error ? error.message : error);
-    return NextResponse.json({ error: "llm_failed", message: "AI 응답을 받지 못했어요. 잠시 후 다시 시도해 주세요." }, { status: 502 });
+    return NextResponse.json(
+      { error: "llm_failed", message: "AI 응답을 받지 못했어요. 잠시 후 다시 시도해 주세요." },
+      { status: 502 },
+    );
   }
 }

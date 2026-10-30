@@ -35,7 +35,7 @@ export function EvidenceCard({
         <p className="mt-0.5 text-[15px] font-bold">{summary}</p>
       </div>
       {entries.length === 0 ? (
-        <p className="px-3 py-3 text-sm text-muted">이 기간에 기록이 없어요.</p>
+        <p className="p-3 text-sm text-muted">이 기간에 기록이 없어요.</p>
       ) : (
         <ul className="px-3">
           {visible.map((entry) => (

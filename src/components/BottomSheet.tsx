@@ -43,7 +43,12 @@ export function BottomSheet({
   if (!open) return null;
 
   return (
-    <div className={`fixed inset-0 z-50 flex justify-center ${className}`} role="dialog" aria-modal="true" aria-label={title}>
+    <div
+      className={`fixed inset-0 z-50 flex justify-center ${className}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+    >
       <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-black/40" />
       <div
         className={`relative mt-auto flex w-full max-w-md flex-col bg-background shadow-xl ${
@@ -56,7 +61,7 @@ export function BottomSheet({
             <CloseIcon />
           </button>
         </header>
-        <div ref={bodyRef} className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+        <div ref={bodyRef} className="min-h-0 flex-1 overflow-y-auto p-4">
           {children}
         </div>
         {footer ? <div className="shrink-0 border-t border-border px-4 py-3">{footer}</div> : null}

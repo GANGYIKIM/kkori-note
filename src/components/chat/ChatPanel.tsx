@@ -18,7 +18,7 @@ export function ChatPanel({ title, children, footer }: { title: string; children
       <header className="flex h-14 shrink-0 items-center border-b border-border px-4">
         <h2 className="font-bold">{title}</h2>
       </header>
-      <div ref={bodyRef} className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+      <div ref={bodyRef} className="min-h-0 flex-1 overflow-y-auto p-4">
         {children}
       </div>
       <div className="shrink-0 border-t border-border px-4 py-3">{footer}</div>

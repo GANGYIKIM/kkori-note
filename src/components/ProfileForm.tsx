@@ -94,12 +94,23 @@ export function ProfileForm() {
         </label>
         <label className="block text-sm">
           체중(kg)
-          <input className={inputClass} inputMode="decimal" value={weight} onChange={(e) => setWeight(e.target.value)} />
+          <input
+            className={inputClass}
+            inputMode="decimal"
+            value={weight}
+            onChange={(e) => setWeight(e.target.value)}
+          />
         </label>
       </div>
       <label className="block text-sm">
         특이사항
-        <textarea className={inputClass} rows={3} maxLength={500} value={notes} onChange={(e) => setNotes(e.target.value)} />
+        <textarea
+          className={inputClass}
+          rows={3}
+          maxLength={500}
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+        />
       </label>
 
       <fieldset className="space-y-2">
@@ -112,7 +123,14 @@ export function ProfileForm() {
                 mode === m ? "border-accent bg-accent font-bold text-accent-foreground" : "border-border bg-background"
               }`}
             >
-              <input type="radio" name="mode" value={m} checked={mode === m} onChange={() => setMode(m)} className="sr-only" />
+              <input
+                type="radio"
+                name="mode"
+                value={m}
+                checked={mode === m}
+                onChange={() => setMode(m)}
+                className="sr-only"
+              />
               {LABELS.mode[m]}
             </label>
           ))}

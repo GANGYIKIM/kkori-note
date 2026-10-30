@@ -46,7 +46,7 @@ export function ChatLauncher({ onOpen }: { onOpen: () => void }) {
     <button
       type="button"
       onClick={onOpen}
-      className="flex h-11 w-full items-center gap-2 rounded-full bg-surface pl-4 pr-1 text-left text-[15px] text-muted"
+      className="flex h-11 w-full items-center gap-2 rounded-full bg-surface pr-1 pl-4 text-left text-[15px] text-muted"
     >
       <span className="flex-1">{COMPOSER_PLACEHOLDER}</span>
       <span className="flex size-9 items-center justify-center rounded-full bg-accent text-accent-foreground">

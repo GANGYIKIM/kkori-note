@@ -15,7 +15,9 @@ export const KIND_STYLES: Record<EntryKind, { tag: string; dot: string }> = {
 
 export function KindTag({ kind }: { kind: EntryKind }) {
   return (
-    <span className={`inline-flex h-6 shrink-0 items-center rounded-md px-2 text-xs font-bold ${KIND_STYLES[kind].tag}`}>
+    <span
+      className={`inline-flex h-6 shrink-0 items-center rounded-md px-2 text-xs font-bold ${KIND_STYLES[kind].tag}`}
+    >
       {LABELS.entryKind[kind]}
     </span>
   );

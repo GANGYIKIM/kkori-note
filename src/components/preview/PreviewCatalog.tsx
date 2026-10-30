@@ -48,14 +48,26 @@ const RISK_COPY: Record<RiskGrade, Record<Mode, { title: string; body: string }>
     ]),
   ) as Record<Mode, { title: string; body: string }>,
   caution: {
-    overprotective: { title: "빨리 병원에 전화해 상담받아 보세요", body: "먹은 양과 지금 상태를 말씀하시면 병원에서 바로 와야 할지 알려줄 거예요." },
+    overprotective: {
+      title: "빨리 병원에 전화해 상담받아 보세요",
+      body: "먹은 양과 지금 상태를 말씀하시면 병원에서 바로 와야 할지 알려줄 거예요.",
+    },
     neutral: { title: "병원에 전화로 상담받아 보시길 권해요", body: "몸무게에 비해 주의가 필요한 양이에요." },
-    easygoing: { title: "다니시는 병원에 전화로 한번 물어보세요", body: "주의가 필요한 양이라 확인해 두면 안심이 돼요." },
+    easygoing: {
+      title: "다니시는 병원에 전화로 한번 물어보세요",
+      body: "주의가 필요한 양이라 확인해 두면 안심이 돼요.",
+    },
   },
   low: {
-    overprotective: { title: "지금은 위험 수치 아래예요", body: "그래도 6~12시간 동안 구토·설사·흥분이 있는지 지켜봐 주시고, 걱정되면 병원에 연락해 주세요." },
+    overprotective: {
+      title: "지금은 위험 수치 아래예요",
+      body: "그래도 6~12시간 동안 구토·설사·흥분이 있는지 지켜봐 주시고, 걱정되면 병원에 연락해 주세요.",
+    },
     neutral: { title: "위험 수치 아래예요", body: "6~12시간 동안 구토·설사·흥분을 지켜봐 주세요." },
-    easygoing: { title: "이 양이면 크게 위험하지 않을 수 있어요", body: "6~12시간 정도 지켜보시고, 다니시는 병원에 문의해 보시면 더 좋아요." },
+    easygoing: {
+      title: "이 양이면 크게 위험하지 않을 수 있어요",
+      body: "6~12시간 정도 지켜보시고, 다니시는 병원에 문의해 보시면 더 좋아요.",
+    },
   },
 };
 
@@ -78,7 +90,7 @@ export function PreviewCatalog() {
 
   return (
     <div className="mx-auto w-full max-w-md px-4 pb-20">
-      <header className="sticky top-0 z-10 -mx-4 flex h-14 items-center gap-1 bg-background/95 px-4 backdrop-blur">
+      <header className="sticky top-0 z-10 -mx-4 flex h-14 items-center gap-1 bg-background/95 px-4 backdrop-blur-sm">
         <Link href="/" aria-label="메인으로" className="-ml-2 rounded-lg p-2 text-muted hover:bg-surface">
           <BackIcon />
         </Link>
@@ -126,7 +138,16 @@ export function PreviewCatalog() {
 
       <Section id="ongoing" title="진행 중 띠" note="R1 · 열린 에피소드, [끝]으로 닫기">
         <OngoingEpisodeBar
-          episodes={[map["e-thunder"], { ...map["e-27-limp"], id: "limp-open", endedAt: null, durationSec: null, occurredAt: "2026-10-29T02:20:00.000Z" }]}
+          episodes={[
+            map["e-thunder"],
+            {
+              ...map["e-27-limp"],
+              id: "limp-open",
+              endedAt: null,
+              durationSec: null,
+              occurredAt: "2026-10-29T02:20:00.000Z",
+            },
+          ]}
           nowIso={MOCK_NOW}
         />
       </Section>
@@ -135,7 +156,11 @@ export function PreviewCatalog() {
         <EmptyState
           title="아직 기록이 없어요"
           description={'아래 입력창에 이렇게 적어 보세요. "방금 배변했는데 무른 편이야"'}
-          action={<span className="inline-block h-10 rounded-xl bg-accent/10 px-4 text-sm font-bold leading-10 text-accent">샘플 기록 불러오기</span>}
+          action={
+            <span className="inline-block h-10 rounded-xl bg-accent/10 px-4 text-sm/10 font-bold text-accent">
+              샘플 기록 불러오기
+            </span>
+          }
         />
       </Section>
 
@@ -164,7 +189,11 @@ export function PreviewCatalog() {
           timeZone={tz}
         />
         <EvidenceCard rangeLabel="최근 3일 · 절뚝임" summary="절뚝임 0건" entries={[]} canExpand timeZone={tz} />
-        <EpisodeCard episodes={[map["e-seizure-today"], map["e-25-seizure"], map["e-thunder"]]} nowIso={MOCK_NOW} timeZone={tz} />
+        <EpisodeCard
+          episodes={[map["e-seizure-today"], map["e-25-seizure"], map["e-thunder"]]}
+          nowIso={MOCK_NOW}
+          timeZone={tz}
+        />
       </Section>
 
       <Section id="risk" title="위험 안내" note="R6 · 등급은 코드가 정하고 모드는 말투만 바꾼다. 🔴는 모든 모드 동일">
@@ -182,7 +211,10 @@ export function PreviewCatalog() {
       </Section>
 
       <Section id="notice" title="시스템 안내" note="R9 · 요청 한도, 오류">
-        <NoticeBanner tone="error" text="오늘 사용할 수 있는 AI 상담 횟수를 모두 사용했어요. 기록은 계속 남길 수 있어요." />
+        <NoticeBanner
+          tone="error"
+          text="오늘 사용할 수 있는 AI 상담 횟수를 모두 사용했어요. 기록은 계속 남길 수 있어요."
+        />
         <NoticeBanner tone="info" text="지금은 화면 미리보기라 입력한 문장을 처리하지 않아요." />
       </Section>
 
@@ -194,7 +226,12 @@ export function PreviewCatalog() {
         </Frame>
         <div className="flex flex-wrap gap-1.5">
           {["e-choco", "e-poop-unknown", "e-27-limp", "e-28-walk"].map((id) => (
-            <button key={id} type="button" onClick={() => setDraft(LogEntrySchema.parse(map[id]))} className="rounded-full bg-surface px-3 py-1 text-sm">
+            <button
+              key={id}
+              type="button"
+              onClick={() => setDraft(LogEntrySchema.parse(map[id]))}
+              className="rounded-full bg-surface px-3 py-1 text-sm"
+            >
               {LABELS.entryKind[map[id].kind]} 예시
             </button>
           ))}
@@ -222,7 +259,10 @@ export function PreviewCatalog() {
 
 function Section({ id, title, note, children }: { id: string; title: string; note: string; children: ReactNode }) {
   return (
-    <section id={id} className="scroll-mt-16 space-y-3 border-t border-border pt-6 [&:not(:first-of-type)]:mt-8 first-of-type:mt-6">
+    <section
+      id={id}
+      className="scroll-mt-16 space-y-3 border-t border-border pt-6 not-first-of-type:mt-8 first-of-type:mt-6"
+    >
       <div>
         <h2 className="text-lg font-bold">{title}</h2>
         <p className="text-sm text-muted">{note}</p>

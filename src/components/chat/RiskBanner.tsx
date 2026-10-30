@@ -16,7 +16,7 @@ export function RiskBanner({ grade, title, body }: { grade: RiskGrade; title: st
       <div className="text-foreground">
         <p className="text-xs font-bold opacity-80">{LABELS.riskGrade[grade]}</p>
         <p className="font-bold">{title}</p>
-        <p className="mt-1 text-sm leading-relaxed text-muted">{body}</p>
+        <p className="mt-1 text-sm/relaxed text-muted">{body}</p>
       </div>
     </div>
   );

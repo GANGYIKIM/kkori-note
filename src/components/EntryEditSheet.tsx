@@ -61,13 +61,23 @@ export function EntryEditForm({
 
       {entry.kind === "poop" ? (
         <Field label="상태">
-          <Options values={STOOL_STATES} labels={LABELS.stoolState} selected={entry.stoolState} onSelect={(stoolState) => set({ stoolState })} />
+          <Options
+            values={STOOL_STATES}
+            labels={LABELS.stoolState}
+            selected={entry.stoolState}
+            onSelect={(stoolState) => set({ stoolState })}
+          />
         </Field>
       ) : null}
 
       {isEpisodeKind(entry.kind) ? (
         <Field label="강도">
-          <Options values={INTENSITIES} labels={LABELS.intensity} selected={entry.intensity} onSelect={(intensity) => set({ intensity })} />
+          <Options
+            values={INTENSITIES}
+            labels={LABELS.intensity}
+            selected={entry.intensity}
+            onSelect={(intensity) => set({ intensity })}
+          />
         </Field>
       ) : null}
 
@@ -98,7 +108,12 @@ export function EntryEditForm({
           </Field>
           {entry.riskFood === "chocolate" ? (
             <Field label="초콜릿 종류">
-              <Options values={CHOCOLATE_TYPES} labels={LABELS.chocolateType} selected={entry.chocolateType} onSelect={(chocolateType) => set({ chocolateType })} />
+              <Options
+                values={CHOCOLATE_TYPES}
+                labels={LABELS.chocolateType}
+                selected={entry.chocolateType}
+                onSelect={(chocolateType) => set({ chocolateType })}
+              />
             </Field>
           ) : null}
           {entry.riskFood ? (
@@ -175,10 +190,18 @@ function EditBody({
     <div className="space-y-6">
       <EntryEditForm entry={draft} timeZone={timeZone} onChange={setDraft} />
       <div className="flex gap-2">
-        <button type="button" onClick={() => onDelete(entry.id)} className="h-12 flex-1 rounded-xl bg-danger/10 font-bold text-danger">
+        <button
+          type="button"
+          onClick={() => onDelete(entry.id)}
+          className="h-12 flex-1 rounded-xl bg-danger/10 font-bold text-danger"
+        >
           삭제
         </button>
-        <button type="button" onClick={() => onSave(draft)} className="h-12 flex-[2] rounded-xl bg-accent font-bold text-accent-foreground">
+        <button
+          type="button"
+          onClick={() => onSave(draft)}
+          className="h-12 flex-2 rounded-xl bg-accent font-bold text-accent-foreground"
+        >
           완료
         </button>
       </div>

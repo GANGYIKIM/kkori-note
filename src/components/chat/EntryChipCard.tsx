@@ -56,7 +56,7 @@ export function EntryChipCard({
         {entries.map((entry) => {
           const open = uncertain.filter((u) => u.entryId === entry.id && isStillEmpty(entry, u.field));
           return (
-            <li key={entry.id} className="space-y-2 px-3 py-3">
+            <li key={entry.id} className="space-y-2 p-3">
               <button
                 type="button"
                 disabled={undone || !onEdit}

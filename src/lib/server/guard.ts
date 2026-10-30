@@ -31,7 +31,12 @@ export function guardLlmRequest(request: Request, text: string): NextResponse | 
     );
   }
 
-  const perClient = checkRateLimit(store, getClientKey(request), serverConfig.dailyLimitPerClient, serverConfig.windowMs);
+  const perClient = checkRateLimit(
+    store,
+    getClientKey(request),
+    serverConfig.dailyLimitPerClient,
+    serverConfig.windowMs,
+  );
   if (!perClient.allowed) {
     return NextResponse.json(
       {

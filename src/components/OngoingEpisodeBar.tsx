@@ -17,9 +17,14 @@ export function OngoingEpisodeBar({
   return (
     <ul className="space-y-2">
       {episodes.map((episode) => (
-        <li key={episode.id} className="flex items-center gap-3 rounded-xl border border-border bg-background px-3 py-2.5 shadow-sm">
+        <li
+          key={episode.id}
+          className="flex items-center gap-3 rounded-xl border border-border bg-background px-3 py-2.5 shadow-sm"
+        >
           <span className="relative flex size-2.5">
-            <span className={`absolute inline-flex size-full animate-ping rounded-full opacity-60 ${KIND_STYLES[episode.kind].dot}`} />
+            <span
+              className={`absolute inline-flex size-full animate-ping rounded-full opacity-60 ${KIND_STYLES[episode.kind].dot}`}
+            />
             <span className={`relative inline-flex size-2.5 rounded-full ${KIND_STYLES[episode.kind].dot}`} />
           </span>
           <p className="flex-1 text-sm">

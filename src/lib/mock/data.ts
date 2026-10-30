@@ -3,13 +3,27 @@
  * 실제 데이터 모델(Zod 스키마)로 만들어, 나중에 저장소와 로직으로 그대로 갈아 끼운다.
  * 시각은 고정된 "지금"(2026-10-29 12:00 KST) 기준이다.
  */
-import { ChatMessageSchema, DogSchema, LogEntrySchema, type ChatBlockInput, type ChatMessage, type Dog, type LogEntry } from "@/lib/domain/types";
+import {
+  ChatMessageSchema,
+  DogSchema,
+  LogEntrySchema,
+  type ChatBlockInput,
+  type ChatMessage,
+  type Dog,
+  type LogEntry,
+} from "@/lib/domain/types";
 import { LABELS, STOOL_STATES } from "@/lib/domain/values";
 
 export const MOCK_TIME_ZONE = "Asia/Seoul";
 export const MOCK_NOW = "2026-10-29T03:00:00.000Z";
 
-export const MOCK_DOG: Dog = DogSchema.parse({ id: "dog-1", name: "초코", ageYears: 4, weightKg: 6.2, notes: "닭고기 알레르기 의심" });
+export const MOCK_DOG: Dog = DogSchema.parse({
+  id: "dog-1",
+  name: "초코",
+  ageYears: 4,
+  weightKg: 6.2,
+  notes: "닭고기 알레르기 의심",
+});
 
 /** KST 날짜·시각을 UTC ISO 문자열로 */
 function kst(date: string, time: string): string {
@@ -23,29 +37,94 @@ function entry(fields: Partial<LogEntry> & Pick<LogEntry, "id" | "kind" | "occur
 /** 메인 목록에 보이는 기록 (최근 일주일) */
 export const MOCK_ENTRIES: LogEntry[] = [
   // 10/29 오늘
-  entry({ id: "e-poop-soft", kind: "poop", occurredAt: kst("2026-10-29", "11:58"), stoolState: "soft", rawText: "방금 배변했는데 무른 편이야" }),
+  entry({
+    id: "e-poop-soft",
+    kind: "poop",
+    occurredAt: kst("2026-10-29", "11:58"),
+    stoolState: "soft",
+    rawText: "방금 배변했는데 무른 편이야",
+  }),
   entry({ id: "e-poop-unknown", kind: "poop", occurredAt: kst("2026-10-29", "11:40"), rawText: "응가 했어" }),
-  entry({ id: "e-meal", kind: "meal", occurredAt: kst("2026-10-29", "08:00"), timeEstimated: true, rawText: "밥 먹고 산책했어" }),
-  entry({ id: "e-walk", kind: "walk", occurredAt: kst("2026-10-29", "11:00"), durationSec: 1800, rawText: "밥 먹고 산책했어" }),
-  entry({ id: "e-seizure-today", kind: "seizure", occurredAt: kst("2026-10-29", "10:30"), endedAt: kst("2026-10-29", "10:32"), durationSec: 120, rawText: "발작했어" }),
-  entry({ id: "e-diarrhea", kind: "poop", occurredAt: kst("2026-10-29", "09:00"), timeEstimated: true, stoolState: "diarrhea", rawText: "오늘 설사했는데 왜 그럴까?" }),
-  entry({ id: "e-choco", kind: "picked_up", occurredAt: kst("2026-10-29", "11:50"), riskFood: "chocolate", rawText: "초코가 초코 먹었어" }),
-  entry({ id: "e-thunder", kind: "thunder_fear", occurredAt: kst("2026-10-29", "11:48"), intensity: "medium", rawText: "천둥 쳐서 덜덜 떨어" }),
+  entry({
+    id: "e-meal",
+    kind: "meal",
+    occurredAt: kst("2026-10-29", "08:00"),
+    timeEstimated: true,
+    rawText: "밥 먹고 산책했어",
+  }),
+  entry({
+    id: "e-walk",
+    kind: "walk",
+    occurredAt: kst("2026-10-29", "11:00"),
+    durationSec: 1800,
+    rawText: "밥 먹고 산책했어",
+  }),
+  entry({
+    id: "e-seizure-today",
+    kind: "seizure",
+    occurredAt: kst("2026-10-29", "10:30"),
+    endedAt: kst("2026-10-29", "10:32"),
+    durationSec: 120,
+    rawText: "발작했어",
+  }),
+  entry({
+    id: "e-diarrhea",
+    kind: "poop",
+    occurredAt: kst("2026-10-29", "09:00"),
+    timeEstimated: true,
+    stoolState: "diarrhea",
+    rawText: "오늘 설사했는데 왜 그럴까?",
+  }),
+  entry({
+    id: "e-choco",
+    kind: "picked_up",
+    occurredAt: kst("2026-10-29", "11:50"),
+    riskFood: "chocolate",
+    rawText: "초코가 초코 먹었어",
+  }),
+  entry({
+    id: "e-thunder",
+    kind: "thunder_fear",
+    occurredAt: kst("2026-10-29", "11:48"),
+    intensity: "medium",
+    rawText: "천둥 쳐서 덜덜 떨어",
+  }),
   // 10/28 어제
   entry({ id: "e-28-meal", kind: "meal", occurredAt: kst("2026-10-28", "08:00") }),
   entry({ id: "e-28-poop", kind: "poop", occurredAt: kst("2026-10-28", "08:20"), stoolState: "normal" }),
   entry({ id: "e-28-snack", kind: "snack", occurredAt: kst("2026-10-28", "15:00"), detail: "닭가슴살 육포 (새 간식)" }),
-  entry({ id: "e-28-walk", kind: "walk", occurredAt: kst("2026-10-28", "18:30"), durationSec: 2400, detail: "다른 강아지랑 잘 놀았어" }),
+  entry({
+    id: "e-28-walk",
+    kind: "walk",
+    occurredAt: kst("2026-10-28", "18:30"),
+    durationSec: 2400,
+    detail: "다른 강아지랑 잘 놀았어",
+  }),
   entry({ id: "e-28-picked", kind: "picked_up", occurredAt: kst("2026-10-28", "18:50"), detail: "휴지 조각" }),
   entry({ id: "e-28-poop2", kind: "poop", occurredAt: kst("2026-10-28", "20:10"), stoolState: "soft" }),
   entry({ id: "e-28-poop3", kind: "poop", occurredAt: kst("2026-10-28", "23:40"), stoolState: "soft" }),
   // 10/27
   entry({ id: "e-27-poop", kind: "poop", occurredAt: kst("2026-10-27", "08:10"), stoolState: "normal" }),
-  entry({ id: "e-27-limp", kind: "limp", occurredAt: kst("2026-10-27", "17:00"), endedAt: kst("2026-10-27", "17:10"), durationSec: 600, intensity: "low", detail: "왼쪽 뒷다리" }),
+  entry({
+    id: "e-27-limp",
+    kind: "limp",
+    occurredAt: kst("2026-10-27", "17:00"),
+    endedAt: kst("2026-10-27", "17:10"),
+    durationSec: 600,
+    intensity: "low",
+    detail: "왼쪽 뒷다리",
+  }),
   entry({ id: "e-27-note", kind: "note", occurredAt: kst("2026-10-27", "21:00"), detail: "미용 다녀옴" }),
   // 10/25
   entry({ id: "e-25-poop", kind: "poop", occurredAt: kst("2026-10-25", "09:00"), stoolState: "normal" }),
-  entry({ id: "e-25-seizure", kind: "seizure", occurredAt: kst("2026-10-25", "22:15"), endedAt: kst("2026-10-25", "22:16"), durationSec: 90, intensity: "high" }),
+  entry({
+    id: "e-25-seizure",
+    kind: "seizure",
+    occurredAt: kst("2026-10-25", "22:15"),
+    endedAt: kst("2026-10-25", "22:16"),
+    durationSec: 90,
+    intensity: "high",
+  }),
   // 10/23
   entry({ id: "e-23-poop", kind: "poop", occurredAt: kst("2026-10-23", "08:30"), stoolState: "hard" }),
   // 10/20 (최근 7일 밖, 범위 확장용)
@@ -53,10 +132,19 @@ export const MOCK_ENTRIES: LogEntry[] = [
 ];
 
 /** 위험 기록에 양·종류를 보충한 뒤의 상태 (케이스 7-2) */
-const CHOCO_UPDATED = { ...MOCK_ENTRIES.find((e) => e.id === "e-choco")!, chocolateType: "milk", amountG: 20 } satisfies LogEntry;
+const CHOCO_UPDATED = {
+  ...MOCK_ENTRIES.find((e) => e.id === "e-choco")!,
+  chocolateType: "milk",
+  amountG: 20,
+} satisfies LogEntry;
 
 /** 되돌린 기록 (케이스 9). 저장소에는 없고 채팅 카드에만 남는다 */
-const UNDONE_WALK = entry({ id: "e-undone-walk", kind: "walk", occurredAt: kst("2026-10-29", "11:59"), rawText: "산책 다녀왔어" });
+const UNDONE_WALK = entry({
+  id: "e-undone-walk",
+  kind: "walk",
+  occurredAt: kst("2026-10-29", "11:59"),
+  rawText: "산책 다녀왔어",
+});
 
 export function toEntryMap(entries: readonly LogEntry[]): Record<string, LogEntry> {
   return Object.fromEntries(entries.map((e) => [e.id, e]));
@@ -107,7 +195,10 @@ export const CHAT_CASES: ChatCase[] = [
     entries: base,
     messages: [
       user("안녕!"),
-      bot({ type: "text", text: "안녕하세요! 초코에게 있었던 일을 적어 주시면 기록하고, 궁금한 걸 물어보시면 기록을 바탕으로 답해 드릴게요." }),
+      bot({
+        type: "text",
+        text: "안녕하세요! 초코에게 있었던 일을 적어 주시면 기록하고, 궁금한 걸 물어보시면 기록을 바탕으로 답해 드릴게요.",
+      }),
     ],
   },
   {
@@ -129,7 +220,11 @@ export const CHAT_CASES: ChatCase[] = [
       user("응가 했어"),
       bot(
         { type: "text", text: "초코의 배변을 기록했어요. 상태(무른지, 딱딱한지)를 알려주시면 더 정확해요." },
-        { type: "entries", entryIds: ["e-poop-unknown"], uncertain: [{ entryId: "e-poop-unknown", field: "stoolState", candidates: ["normal", "soft", "diarrhea"] }] },
+        {
+          type: "entries",
+          entryIds: ["e-poop-unknown"],
+          uncertain: [{ entryId: "e-poop-unknown", field: "stoolState", candidates: ["normal", "soft", "diarrhea"] }],
+        },
       ),
     ],
   },
@@ -140,7 +235,10 @@ export const CHAT_CASES: ChatCase[] = [
     entries: base,
     messages: [
       user("밥 먹고 산책했어"),
-      bot({ type: "text", text: "식사와 산책을 기록했어요. 식사 시각은 추정했으니 다르면 고쳐 주세요." }, { type: "entries", entryIds: ["e-meal", "e-walk"] }),
+      bot(
+        { type: "text", text: "식사와 산책을 기록했어요. 식사 시각은 추정했으니 다르면 고쳐 주세요." },
+        { type: "entries", entryIds: ["e-meal", "e-walk"] },
+      ),
     ],
   },
   {
@@ -150,7 +248,10 @@ export const CHAT_CASES: ChatCase[] = [
     entries: { ...base, "e-seizure-today": { ...base["e-seizure-today"], endedAt: null, durationSec: null } },
     messages: [
       user("발작했어"),
-      bot({ type: "text", text: "초코의 발작을 기록했어요. 끝나면 \"끝났어\"라고 알려주세요." }, { type: "entries", entryIds: ["e-seizure-today"] }),
+      bot(
+        { type: "text", text: '초코의 발작을 기록했어요. 끝나면 "끝났어"라고 알려주세요.' },
+        { type: "entries", entryIds: ["e-seizure-today"] },
+      ),
     ],
   },
   {
@@ -160,7 +261,10 @@ export const CHAT_CASES: ChatCase[] = [
     entries: base,
     messages: [
       user("끝났어, 2분쯤"),
-      bot({ type: "text", text: "발작 기록에 지속시간 2분을 붙였어요." }, { type: "entries", entryIds: ["e-seizure-today"] }),
+      bot(
+        { type: "text", text: "발작 기록에 지속시간 2분을 붙였어요." },
+        { type: "entries", entryIds: ["e-seizure-today"] },
+      ),
     ],
   },
   {
@@ -171,8 +275,17 @@ export const CHAT_CASES: ChatCase[] = [
     messages: [
       user("지난주 배변 어땠어?"),
       bot(
-        { type: "evidence", rangeLabel: "최근 7일 · 10월 23일 ~ 29일", entryIds: lastWeek.ids, summary: lastWeek.summary, canExpand: true },
-        { type: "text", text: "일주일 동안 배변은 대체로 하루 1~2번이었어요. 어제 저녁부터 무른 변이 이어지다 오늘 아침 설사가 한 번 있었어요. 오늘 하루는 변 상태와 물 마시는 양을 함께 지켜봐 주세요." },
+        {
+          type: "evidence",
+          rangeLabel: "최근 7일 · 10월 23일 ~ 29일",
+          entryIds: lastWeek.ids,
+          summary: lastWeek.summary,
+          canExpand: true,
+        },
+        {
+          type: "text",
+          text: "일주일 동안 배변은 대체로 하루 1~2번이었어요. 어제 저녁부터 무른 변이 이어지다 오늘 아침 설사가 한 번 있었어요. 오늘 하루는 변 상태와 물 마시는 양을 함께 지켜봐 주세요.",
+        },
       ),
     ],
   },
@@ -184,9 +297,21 @@ export const CHAT_CASES: ChatCase[] = [
     messages: [
       user("오늘 설사했는데 왜 그럴까?"),
       bot(
-        { type: "evidence", rangeLabel: "최근 3일 · 식사·간식·주워 먹은 것", entryIds: ["e-meal", "e-28-meal", "e-28-snack", "e-28-picked"], summary: "식사 2건 · 간식 1건 · 주워 먹은 것 1건", canExpand: true },
-        { type: "text", text: "설사는 보통 최근 2~3일 동안 먹은 것의 영향을 받아요. 기록을 보면 어제 처음 먹은 닭가슴살 육포와, 산책 중 주워 먹은 휴지 조각이 원인 후보예요. 프로필에 닭고기 알레르기 의심이 적혀 있어서 육포 쪽을 먼저 의심해 볼 만해요." },
-        { type: "text", text: "말씀하신 설사 증상은 아래처럼 기록했어요. 더 알려주실 게 있으면 말씀해 주시거나 칩에서 고쳐 주세요." },
+        {
+          type: "evidence",
+          rangeLabel: "최근 3일 · 식사·간식·주워 먹은 것",
+          entryIds: ["e-meal", "e-28-meal", "e-28-snack", "e-28-picked"],
+          summary: "식사 2건 · 간식 1건 · 주워 먹은 것 1건",
+          canExpand: true,
+        },
+        {
+          type: "text",
+          text: "설사는 보통 최근 2~3일 동안 먹은 것의 영향을 받아요. 기록을 보면 어제 처음 먹은 닭가슴살 육포와, 산책 중 주워 먹은 휴지 조각이 원인 후보예요. 프로필에 닭고기 알레르기 의심이 적혀 있어서 육포 쪽을 먼저 의심해 볼 만해요.",
+        },
+        {
+          type: "text",
+          text: "말씀하신 설사 증상은 아래처럼 기록했어요. 더 알려주실 게 있으면 말씀해 주시거나 칩에서 고쳐 주세요.",
+        },
         { type: "entries", entryIds: ["e-diarrhea"] },
       ),
     ],
@@ -200,8 +325,20 @@ export const CHAT_CASES: ChatCase[] = [
       user("초코가 초코 먹었어"),
       bot(
         { type: "text", text: "초코가 초콜릿을 먹은 것을 기록했어요." },
-        { type: "entries", entryIds: ["e-choco"], uncertain: [{ entryId: "e-choco", field: "chocolateType", candidates: ["milk", "dark", "white"] }, { entryId: "e-choco", field: "amountG", candidates: [] }] },
-        { type: "risk", grade: "high", title: "지금 가까운 동물병원에 연락해 주세요", body: "초콜릿은 종류와 먹은 양에 따라 위험할 수 있고, 시간이 중요해요. 야간이면 24시간 동물병원에 연락해 주세요." },
+        {
+          type: "entries",
+          entryIds: ["e-choco"],
+          uncertain: [
+            { entryId: "e-choco", field: "chocolateType", candidates: ["milk", "dark", "white"] },
+            { entryId: "e-choco", field: "amountG", candidates: [] },
+          ],
+        },
+        {
+          type: "risk",
+          grade: "high",
+          title: "지금 가까운 동물병원에 연락해 주세요",
+          body: "초콜릿은 종류와 먹은 양에 따라 위험할 수 있고, 시간이 중요해요. 야간이면 24시간 동물병원에 연락해 주세요.",
+        },
         { type: "text", text: "어떤 초콜릿을 얼마나 먹었는지 알려주시면 위험도를 다시 계산해 드릴게요." },
       ),
     ],
@@ -216,7 +353,12 @@ export const CHAT_CASES: ChatCase[] = [
       bot(
         { type: "text", text: "초콜릿 기록에 종류와 양을 붙였어요." },
         { type: "entries", entryIds: ["e-choco"] },
-        { type: "risk", grade: "low", title: "이 양이면 크게 위험하지 않을 수 있어요", body: "6~12시간 정도 구토·설사·흥분이 있는지 지켜보시고, 다니시는 병원에 문의해 보시면 더 좋아요." },
+        {
+          type: "risk",
+          grade: "low",
+          title: "이 양이면 크게 위험하지 않을 수 있어요",
+          body: "6~12시간 정도 구토·설사·흥분이 있는지 지켜보시고, 다니시는 병원에 문의해 보시면 더 좋아요.",
+        },
       ),
     ],
   },
@@ -230,7 +372,12 @@ export const CHAT_CASES: ChatCase[] = [
       bot(
         { type: "text", text: "초콜릿 기록에 종류와 양을 붙였어요." },
         { type: "entries", entryIds: ["e-choco"] },
-        { type: "risk", grade: "caution", title: "병원에 전화로 상담받아 보시길 권해요", body: "몸무게에 비해 주의가 필요한 양이에요. 지금 상태와 먹은 양을 말씀하시면 병원에서 와야 할지 알려줄 거예요." },
+        {
+          type: "risk",
+          grade: "caution",
+          title: "병원에 전화로 상담받아 보시길 권해요",
+          body: "몸무게에 비해 주의가 필요한 양이에요. 지금 상태와 먹은 양을 말씀하시면 병원에서 와야 할지 알려줄 거예요.",
+        },
       ),
     ],
   },
@@ -241,7 +388,10 @@ export const CHAT_CASES: ChatCase[] = [
     entries: base,
     messages: [
       user("발작 기록 모아서 보여줘"),
-      bot({ type: "text", text: "최근 30일 발작 기록 2건을 모았어요." }, { type: "episodes", entryIds: ["e-seizure-today", "e-25-seizure"] }),
+      bot(
+        { type: "text", text: "최근 30일 발작 기록 2건을 모았어요." },
+        { type: "episodes", entryIds: ["e-seizure-today", "e-25-seizure"] },
+      ),
     ],
   },
   {
@@ -251,7 +401,10 @@ export const CHAT_CASES: ChatCase[] = [
     entries: { ...base, [UNDONE_WALK.id]: UNDONE_WALK },
     messages: [
       user("산책 다녀왔어"),
-      bot({ type: "text", text: "초코의 산책을 기록했어요." }, { type: "entries", entryIds: [UNDONE_WALK.id], undone: true }),
+      bot(
+        { type: "text", text: "초코의 산책을 기록했어요." },
+        { type: "entries", entryIds: [UNDONE_WALK.id], undone: true },
+      ),
     ],
   },
   {
@@ -261,7 +414,11 @@ export const CHAT_CASES: ChatCase[] = [
     entries: base,
     messages: [
       user("요즘 컨디션 어때 보여?"),
-      bot({ type: "notice", tone: "error", text: "오늘 사용할 수 있는 AI 상담 횟수를 모두 사용했어요. 기록은 계속 남길 수 있어요." }),
+      bot({
+        type: "notice",
+        tone: "error",
+        text: "오늘 사용할 수 있는 AI 상담 횟수를 모두 사용했어요. 기록은 계속 남길 수 있어요.",
+      }),
     ],
   },
 ];

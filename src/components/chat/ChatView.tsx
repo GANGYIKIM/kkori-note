@@ -38,7 +38,14 @@ export function ChatView({
         ) : (
           <li key={message.id} className="max-w-[92%] space-y-2">
             {message.blocks.map((block, index) => (
-              <Block key={index} block={block} entries={entries} nowIso={nowIso} timeZone={timeZone} actions={actions} />
+              <Block
+                key={index}
+                block={block}
+                entries={entries}
+                nowIso={nowIso}
+                timeZone={timeZone}
+                actions={actions}
+              />
             ))}
           </li>
         ),
@@ -65,7 +72,9 @@ function Block({
   switch (block.type) {
     case "text":
       return (
-        <p className="w-fit rounded-2xl rounded-bl-md bg-surface px-4 py-2.5 text-[15px] leading-relaxed">{block.text}</p>
+        <p className="w-fit rounded-2xl rounded-bl-md bg-surface px-4 py-2.5 text-[15px] leading-relaxed">
+          {block.text}
+        </p>
       );
     case "entries":
       return (
@@ -92,7 +101,9 @@ function Block({
         />
       );
     case "episodes":
-      return <EpisodeCard episodes={pick(block.entryIds)} nowIso={nowIso} timeZone={timeZone} onSelect={actions.onEdit} />;
+      return (
+        <EpisodeCard episodes={pick(block.entryIds)} nowIso={nowIso} timeZone={timeZone} onSelect={actions.onEdit} />
+      );
     case "risk":
       return <RiskBanner grade={block.grade} title={block.title} body={block.body} />;
     case "notice":

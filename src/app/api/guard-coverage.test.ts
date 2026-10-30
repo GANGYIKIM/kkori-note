@@ -6,8 +6,7 @@ import { fileURLToPath } from "node:url";
 const API_DIR = fileURLToPath(new URL(".", import.meta.url));
 
 function findRouteFiles(): string[] {
-  return readdirSync(API_DIR, { recursive: true, encoding: "utf8" })
-    .filter((path) => path.endsWith("route.ts"));
+  return readdirSync(API_DIR, { recursive: true, encoding: "utf8" }).filter((path) => path.endsWith("route.ts"));
 }
 
 // src/app/api/의 라우트는 모두 LLM을 호출하므로, 호출 전에 guardLlmRequest를 거쳐야 한다 (PRD R9).

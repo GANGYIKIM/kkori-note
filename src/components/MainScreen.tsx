@@ -56,7 +56,9 @@ export function MainScreen() {
     setMessages((list) =>
       list.map((m) => ({
         ...m,
-        blocks: m.blocks.map((b) => (b.type === "entries" && b.entryIds.some((id) => ids.includes(id)) ? { ...b, undone: true } : b)),
+        blocks: m.blocks.map((b) =>
+          b.type === "entries" && b.entryIds.some((id) => ids.includes(id)) ? { ...b, undone: true } : b,
+        ),
       })),
     );
   }
@@ -103,13 +105,13 @@ export function MainScreen() {
   return (
     <div className="lg:grid lg:h-dvh lg:grid-cols-[minmax(0,1fr)_420px]">
       <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 lg:min-h-0 lg:max-w-none lg:overflow-y-auto">
-        <div className="sticky top-0 z-10 -mx-4 bg-background/95 px-4 backdrop-blur">
+        <div className="sticky top-0 z-10 -mx-4 bg-background/95 px-4 backdrop-blur-sm">
           <div className="lg:mx-auto lg:max-w-2xl">
             <AppHeader dogName={MOCK_DOG.name} />
           </div>
         </div>
 
-        <main className="w-full flex-1 space-y-4 pb-28 pt-2 lg:mx-auto lg:max-w-2xl lg:pb-8">
+        <main className="w-full flex-1 space-y-4 pt-2 pb-28 lg:mx-auto lg:max-w-2xl lg:pb-8">
           <OngoingEpisodeBar episodes={ongoing} nowIso={MOCK_NOW} onClose={closeEpisode} />
           {entries.length === 0 ? (
             <EmptyState
@@ -130,7 +132,7 @@ export function MainScreen() {
           )}
         </main>
 
-        <div className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md bg-gradient-to-t from-background via-background to-background/0 px-4 pb-4 pt-6 lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md bg-linear-to-t from-background via-background to-background/0 px-4 pt-6 pb-4 lg:hidden">
           <ChatLauncher onOpen={() => setChatOpen(true)} />
         </div>
       </div>
