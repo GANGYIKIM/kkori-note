@@ -1,3 +1,4 @@
+import "client-only";
 import { createIndexedDbStorage } from "@/lib/storage/indexeddb";
 import type { Storage } from "@/lib/storage/storage";
 

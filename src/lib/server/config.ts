@@ -1,3 +1,5 @@
+import "server-only";
+
 /** 서버 설정. 값은 환경변수로 바꿀 수 있고, 기본값은 데모용으로 보수적이다. (PRD R9) */
 
 function intFromEnv(name: string, fallback: number): number {

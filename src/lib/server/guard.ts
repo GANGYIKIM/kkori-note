@@ -1,3 +1,4 @@
+import "server-only";
 import { NextResponse } from "next/server";
 import { checkRateLimit, createMemoryStore } from "./rate-limit";
 import { serverConfig } from "./config";
