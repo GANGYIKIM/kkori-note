@@ -2,7 +2,6 @@
 
 - **Status:** Accepted
 - **Date:** 2026-10-30
-- **Decision makers:** 김강이
 - **Confidence:** Medium (시간·비용 대비 판단이고, 리렌더링 비용은 아직 측정하지 않음)
 
 ## Decision
@@ -29,6 +28,12 @@
 ## Evaluation
 
 리렌더링 비용은 측정하지 않았다. 데모 데이터가 약 2주치(기록 수십~백여 건, PRD R10)라 문제가 될 가능성은 낮다고 판단했다.
+
+## 확인하지 않은 가정
+
+| ID | 가정 | 확인 방법 |
+|---|---|---|
+| A1 | 데모 데이터 규모에서는 리렌더링 비용이 문제 되지 않는다 | 실제 저장소로 바꾼 뒤 React DevTools Profiler로 본다 |
 
 ## Consequences
 
