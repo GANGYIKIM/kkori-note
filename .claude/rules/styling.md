@@ -12,3 +12,4 @@ paths:
 - 화면 문구는 한국어 존댓말("~해요")로 쓴다.
 - 저장소(Dexie)를 쓰는 컴포넌트는 `"use client"`다. 저장소는 `src/lib/client/`의 인스턴스를 통해서만 쓴다.
 - 페이지 파일(`src/app/**/page.tsx`)은 얇게 두고 화면 조각은 `src/components/`에 둔다.
+- 새 컴포넌트나 새 상태(빈 상태, 에러, 모호한 칩 등)를 만들면 `/preview` 카탈로그(`src/components/preview/PreviewCatalog.tsx`)에도 추가한다.
