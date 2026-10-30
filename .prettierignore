@@ -1,0 +1,3 @@
+# 문서는 표 칸 맞춤과 빈 줄 삽입으로 diff가 커져서 제외한다
+*.md
+package-lock.json
