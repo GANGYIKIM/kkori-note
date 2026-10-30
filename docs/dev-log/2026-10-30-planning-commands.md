@@ -1,0 +1,45 @@
+# `/planning`·`/next-plan` 명령어와 R 단위 dev-log (R 없음, 개발 도구)
+
+- 근거: ADR-0006
+
+## 계획
+
+승인받은 내용을 그대로 옮긴다.
+
+- 목표: `plan.md`(큰 우선순위) → R 문서(하위 작업 목록과 상태) → 하위 문서(계획 + 이어 쓰는 결과)의 3단 구조를 만들고, 이를 다루는 `/planning`과 `/next-plan`을 만든다.
+- 근거: 2026-10-30 대화에서 정한 방향. ADR-0002의 "일정"과 "`docs/PLAN.md` 다루기"를 대체한다.
+- 수정할 파일: `.claude/commands/planning.md`, `.claude/commands/next-plan.md`, `docs/plan.md`, `docs/dev-log/README.md`, `docs/dev-log/TEMPLATE.md`, `docs/dev-log/TEMPLATE-R.md`, `tests/docs-index.test.ts`, `CLAUDE.md`, `docs/adr/0006-plan-and-r-scoped-dev-log.md`
+- 완료 기준: `lint`, `typecheck`, `test` 통과. 사용자가 `/next-plan`과 인자 없는 `/planning`을 실행해 동작을 확인한다.
+- 범위 밖: 실제 `/planning R1` 실행, 기존 넓은 화면 기록 옮기기, `npm run metrics`, `log.md` 손보기.
+- 영향받는 지표: 없음
+- 결정할 것: `/next-plan` 실행 방식(haiku + fork로 정함), 새 ADR 작성(ADR-0006으로 씀)
+
+## 결과
+
+### 2026-10-30 · (커밋 전)
+
+- 왜: 처음 구현
+- 한 일:
+  - `/planning <R> <하고 싶은 일>`: PRD 색인을 미리 넣고, 그 R 섹션과 걸린 열린 질문만 읽어 하위 작업 초안을 보여준다. 승인받으면 R 문서를 만들고 dev-log 색인과 `plan.md` 작업 표에 줄을 더한다. 인자가 없거나 R 번호가 없으면 형식, 예, R 목록만 안내하고 끝낸다.
+  - `/next-plan`: haiku + `context: fork`. `scripts/next-plan-context.sh`(plan.md와 R 문서)와 `git log --oneline -8`을 미리 넣고, 도구 없이 정해진 형식으로만 답한다. 진행 중인 계획이 없으면 대신 고르지 않는다.
+  - 색인 테스트가 R 폴더(dev-log 색인에 R 문서가 있는지)와 하위 문서(R 문서에 링크됐는지)도 검사한다.
+- 측정: `/next-plan`을 사용자가 두 번 실행했다. 값은 작업 완료 알림의 `usage`에서 옮겼다.
+
+  | | 1차 | 2차 (미리 넣기 고친 뒤) |
+  |---|---|---|
+  | 도구 사용 | 2번 | 0번 |
+  | 하위 에이전트 토큰 | 42,878 | 38,807 |
+  | 걸린 시간 | 7.4초 | 5.7초 |
+
+  - 실행 기록에서 모델이 `claude-haiku-5-5`인 것을 확인했다. ADR-0006의 가정 A2(`.claude/commands/`에서도 `model`과 `context: fork`가 동작한다)는 맞았다.
+  - 남은 약 3.9만 토큰은 하위 에이전트에 기본으로 붙는 지시문과 도구 설명으로 보인다(추측). 명령어 본문으로는 더 줄이기 어렵다.
+- 결정과 맞바꾼 것:
+  - `/next-plan`을 지금 대화의 모델이 아니라 haiku + fork로 돌린다. 판단이 단순해서 싸게 돌리는 쪽을 골랐고, 제안이 사용자 판단과 자주 다르면 sonnet으로 바꾼다.
+  - 하위 문서는 `/planning`에서 미리 만들지 않고 하위 작업을 시작할 때 만든다. 필요한 만큼만 문서가 생긴다.
+- 계획과 달라진 점:
+  - 하위 문서를 "끝날 때" R 문서에 링크하려 했으나 "만들 때" 링크로 바꿨다. 끝날 때 링크하면 작업 도중 색인 테스트가 실패해 pre-commit에서 커밋이 막힌다.
+  - `scripts/next-plan-context.sh`를 새로 만들었다(아래 두 번째 항목).
+  - R에 속하지 않는 작업(이 기록처럼)을 둘 곳이 없어서, dev-log 바로 아래에 `날짜-slug.md`로 둔다는 규칙을 `docs/dev-log/README.md`에 더했다.
+- AI가 틀렸다가 고친 것:
+  - `/planning`의 미리 넣기: R 폴더 목록을 `ls -d docs/dev-log/R*/`로 넣었다 → R 폴더가 없으면 zsh가 패턴 오류를 낸다 → 커밋 전 미리보기 실행에서 오류를 보고 `find`로 바꿨다.
+  - `/next-plan`의 미리 넣기: `find ... -exec cat`으로 넣었다 → 실행해 보니 결과 대신 `[output of command 1 …]` 자리 표시만 들어가 haiku가 같은 명령을 직접 다시 실행했다(도구 2번) → 실행 기록의 사용자 메시지를 열어 확인하고, `-exec` 없는 스크립트 하나로 바꾸고 허용 규칙을 그 명령으로만 좁혔다. `-exec`가 자동 허용에서 빠진 이유는 확인하지 않았다(추측: 임의 명령을 실행할 수 있어서).
