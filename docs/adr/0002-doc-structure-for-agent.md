@@ -1,6 +1,6 @@
 # ADR-0002: 문서 구조 — CLAUDE.md는 항상 필요한 것만, PRD는 영역별 파일로, 경로 규칙은 `.claude/rules/`로
 
-- **Status:** Accepted (ADR 작성 시점 규칙은 ADR-0004로 대체)
+- **Status:** Accepted (ADR 작성 시점 규칙은 ADR-0004로, 일정과 `docs/PLAN.md` 다루기는 ADR-0006으로 대체)
 - **Date:** 2026-10-30
 - **Confidence:** Medium (구조는 합의했지만, 읽는 양이 실제로 줄었는지와 규칙이 더 잘 지켜지는지는 아직 확인하지 않음)
 
