@@ -38,10 +38,6 @@ export default function SettingsPage() {
             동물병원에 바로 연락해 주세요.
           </p>
         </section>
-
-        <Link href="/preview" className="block text-center text-sm text-muted underline">
-          컴포넌트 미리보기
-        </Link>
       </div>
     </div>
   );
