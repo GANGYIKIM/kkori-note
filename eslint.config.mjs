@@ -15,6 +15,16 @@ const noBarrel = [
   },
 ];
 
+const bottomExports = {
+  selector: "ExportNamedDeclaration[declaration]",
+  message: "export는 파일 맨 아래 export { } 한 곳에 모아 주세요.",
+};
+
+const noInlineSvg = {
+  selector: "JSXOpeningElement[name.name='svg']",
+  message: "아이콘은 src/components/common/Icons.tsx에 추가해서 가져다 써 주세요.",
+};
+
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
@@ -34,7 +44,7 @@ const eslintConfig = defineConfig([
   },
   {
     rules: {
-      "no-restricted-syntax": ["error", ...noBarrel],
+      "no-restricted-syntax": ["error", ...noBarrel, noInlineSvg],
       "no-restricted-imports": [
         "error",
         {
@@ -58,16 +68,16 @@ const eslintConfig = defineConfig([
         "error",
         { namedComponents: "arrow-function", unnamedComponents: "arrow-function" },
       ],
-      "no-restricted-syntax": [
-        "error",
-        ...noBarrel,
-        {
-          selector: "ExportNamedDeclaration[declaration]",
-          message: "export는 파일 맨 아래 export { } 한 곳에 모아 주세요.",
-        },
-      ],
+      "no-restricted-syntax": ["error", ...noBarrel, bottomExports, noInlineSvg],
       "import/exports-last": "error",
       "import/group-exports": "error",
+    },
+  },
+  // <svg>는 아이콘 모음에서만 쓴다
+  {
+    files: ["src/components/common/Icons.tsx"],
+    rules: {
+      "no-restricted-syntax": ["error", ...noBarrel, bottomExports],
     },
   },
   prettier,
