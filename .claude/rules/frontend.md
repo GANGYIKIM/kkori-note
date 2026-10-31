@@ -25,7 +25,7 @@ paths:
 - [ ] 2. 아래 "컴포넌트 폴더" 기준으로 폴더를 고른다.
 - [ ] 3. 아래 "이름" 기준으로 이름을 짓는다.
 - [ ] 4. `common/`이면 아래 "`common/` 컴포넌트"의 형식으로 상단 주석을 단다. `layout/`이면 어떤 상황에 쓰는지 한 줄 주석을 단다.
-- [ ] 5. `/preview` 카탈로그(`src/components/preview/ComponentCatalog.tsx`)에 추가한다. 새 상태(빈 상태, 에러, 모호한 칩 등)도 같다.
+- [ ] 5. 옆에 `X.preview.tsx`를 만들어 상태(빈 상태, 에러, 모호한 칩 등)마다 변형을 하나씩 적고, `src/components/preview/catalog.ts`에 등록한다. 상태를 더하거나 props를 바꿨을 때도 같이 고친다. 빠지면 `tests/preview-catalog.test.ts`가 실패한다. PRD 예시 대화는 컴포넌트가 아니라 `src/lib/mock/data.ts`의 `CHAT_CASES`에 더한다 (ADR-0010).
 - [ ] 6. 새 폴더를 만들었으면 `tests/component-folders.test.ts`의 `FOLDERS`와 아래 표를 함께 고친다.
 - [ ] 7. `common/` 컴포넌트의 props나 쓰임새를 바꿨으면 상단 주석도 고친다.
 
