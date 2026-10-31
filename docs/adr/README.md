@@ -26,3 +26,4 @@
 | [0004](0004-auto-write-docs-after-decision.md) | 결정이 나면 문서는 묻지 않고 쓴다. ADR은 고치지 않고 대체한다. 추측은 표시한다. 색인을 둔다 | Accepted | 없음 |
 | [0005](0005-precommit-and-ci-checks.md) | husky pre-commit과 GitHub Actions에서 lint·typecheck·test를 모두 돌린다. LLM 측정은 `npm run metrics`로 따로 | Accepted | 없음 |
 | [0006](0006-plan-and-r-scoped-dev-log.md) | `plan.md`는 큰 우선순위만, 세부 계획과 결과는 R 단위 dev-log에. `/planning`·`/next-plan`으로 다룬다 | Accepted | 없음 |
+| [0007](0007-import-path-and-no-barrel.md) | 배럴 파일을 두지 않는다. import는 폴더 밖 `@/`, 같은 폴더 안 `./`. ESLint로 강제 | Accepted | 없음 |
