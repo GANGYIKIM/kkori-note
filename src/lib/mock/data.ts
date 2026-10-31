@@ -14,10 +14,10 @@ import {
 } from "@/lib/domain/types";
 import { LABELS, STOOL_STATES } from "@/lib/domain/values";
 
-export const MOCK_TIME_ZONE = "Asia/Seoul";
-export const MOCK_NOW = "2026-10-29T03:00:00.000Z";
+const MOCK_TIME_ZONE = "Asia/Seoul";
+const MOCK_NOW = "2026-10-29T03:00:00.000Z";
 
-export const MOCK_DOG: Dog = DogSchema.parse({
+const MOCK_DOG: Dog = DogSchema.parse({
   id: "dog-1",
   name: "초코",
   ageYears: 4,
@@ -26,16 +26,16 @@ export const MOCK_DOG: Dog = DogSchema.parse({
 });
 
 /** KST 날짜·시각을 UTC ISO 문자열로 */
-function kst(date: string, time: string): string {
+const kst = (date: string, time: string): string => {
   return new Date(`${date}T${time}:00+09:00`).toISOString();
-}
+};
 
-function entry(fields: Partial<LogEntry> & Pick<LogEntry, "id" | "kind" | "occurredAt">): LogEntry {
+const entry = (fields: Partial<LogEntry> & Pick<LogEntry, "id" | "kind" | "occurredAt">): LogEntry => {
   return LogEntrySchema.parse({ dogId: MOCK_DOG.id, createdAt: fields.occurredAt, ...fields });
-}
+};
 
 /** 메인 목록에 보이는 기록 (최근 일주일) */
-export const MOCK_ENTRIES: LogEntry[] = [
+const MOCK_ENTRIES: LogEntry[] = [
   // 10/29 오늘
   entry({
     id: "e-poop-soft",
@@ -146,12 +146,12 @@ const UNDONE_WALK = entry({
   rawText: "산책 다녀왔어",
 });
 
-export function toEntryMap(entries: readonly LogEntry[]): Record<string, LogEntry> {
+const toEntryMap = (entries: readonly LogEntry[]): Record<string, LogEntry> => {
   return Object.fromEntries(entries.map((e) => [e.id, e]));
-}
+};
 
 /** 최근 7일 배변 요약. 숫자는 코드가 계산한다 (CLAUDE.md 규칙 3) */
-function poopSummary(fromDate: string): { ids: string[]; summary: string } {
+const poopSummary = (fromDate: string): { ids: string[]; summary: string } => {
   const poops = MOCK_ENTRIES.filter((e) => e.kind === "poop" && e.occurredAt >= kst(fromDate, "00:00"));
   const parts = STOOL_STATES.map((s) => [s, poops.filter((p) => p.stoolState === s).length] as const)
     .filter(([, n]) => n > 0)
@@ -159,10 +159,10 @@ function poopSummary(fromDate: string): { ids: string[]; summary: string } {
   const unknown = poops.filter((p) => p.stoolState === null).length;
   if (unknown > 0) parts.push(`상태 모름 ${unknown}`);
   return { ids: poops.map((p) => p.id), summary: `배변 ${poops.length}건 · ${parts.join(", ")}` };
-}
+};
 
 let seq = 0;
-function message(role: ChatMessage["role"], blocks: ChatBlockInput[]): ChatMessage {
+const message = (role: ChatMessage["role"], blocks: ChatBlockInput[]): ChatMessage => {
   seq += 1;
   return ChatMessageSchema.parse({
     id: `m-${seq}`,
@@ -171,11 +171,11 @@ function message(role: ChatMessage["role"], blocks: ChatBlockInput[]): ChatMessa
     blocks,
     createdAt: new Date(Date.parse(MOCK_NOW) - (100 - seq) * 60_000).toISOString(),
   });
-}
+};
 const user = (text: string) => message("user", [{ type: "text", text }]);
 const bot = (...blocks: ChatBlockInput[]) => message("assistant", blocks);
 
-export interface ChatCase {
+interface ChatCase {
   id: string;
   title: string;
   /** PRD 근거 */
@@ -187,7 +187,7 @@ export interface ChatCase {
 const base = toEntryMap(MOCK_ENTRIES);
 const lastWeek = poopSummary("2026-10-23");
 
-export const CHAT_CASES: ChatCase[] = [
+const CHAT_CASES: ChatCase[] = [
   {
     id: "other",
     title: "기록도 상담도 아닌 말",
@@ -424,7 +424,7 @@ export const CHAT_CASES: ChatCase[] = [
 ];
 
 /** 메인 화면 채팅에 보일 대화 (재판정 예시는 빼고 순서대로 이어 붙임) */
-export const MAIN_CHAT_CASE_IDS = [
+const MAIN_CHAT_CASE_IDS = [
   "other",
   "record-simple",
   "record-uncertain",
@@ -435,3 +435,6 @@ export const MAIN_CHAT_CASE_IDS = [
   "risk-unknown",
   "episodes-lookup",
 ] as const;
+
+export { MOCK_TIME_ZONE, MOCK_NOW, MOCK_DOG, MOCK_ENTRIES, toEntryMap, CHAT_CASES, MAIN_CHAT_CASE_IDS };
+export type { ChatCase };

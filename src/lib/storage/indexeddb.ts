@@ -25,7 +25,7 @@ class KkoriDB extends Dexie {
 }
 
 /** 브라우저 전용 구현. 서버(Route Handler, 서버 컴포넌트)에서 호출하면 안 된다. */
-export function createIndexedDbStorage(): Storage {
+const createIndexedDbStorage = (): Storage => {
   const db = new KkoriDB();
 
   return {
@@ -71,4 +71,6 @@ export function createIndexedDbStorage(): Storage {
       return rows.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
     },
   };
-}
+};
+
+export { createIndexedDbStorage };

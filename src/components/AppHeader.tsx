@@ -2,7 +2,7 @@ import Link from "next/link";
 import { SettingsIcon } from "./Icons";
 
 /** 메인 상단. 강아지 이름과 설정 아이콘 (PRD R0) */
-export function AppHeader({ dogName }: { dogName: string | null }) {
+const AppHeader = ({ dogName }: { dogName: string | null }) => {
   return (
     <header className="flex h-14 items-center justify-between">
       <p className="text-lg font-bold">
@@ -14,4 +14,6 @@ export function AppHeader({ dogName }: { dogName: string | null }) {
       </Link>
     </header>
   );
-}
+};
+
+export { AppHeader };

@@ -4,7 +4,7 @@ import { LABELS } from "@/lib/domain/values";
 import { KIND_STYLES } from "@/components/KindTag";
 
 /** 에피소드 모아 보기 카드. 최신이 위인 세로 타임라인 (PRD R4 수락 기준) */
-export function EpisodeCard({
+const EpisodeCard = ({
   episodes,
   nowIso,
   timeZone,
@@ -14,7 +14,7 @@ export function EpisodeCard({
   nowIso: string;
   timeZone: string;
   onSelect?: (entry: LogEntry) => void;
-}) {
+}) => {
   const sorted = [...episodes].sort((a, b) => b.occurredAt.localeCompare(a.occurredAt));
   return (
     <ol className="rounded-2xl border border-border bg-background p-3">
@@ -41,4 +41,6 @@ export function EpisodeCard({
       ))}
     </ol>
   );
-}
+};
+
+export { EpisodeCard };

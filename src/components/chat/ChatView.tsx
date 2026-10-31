@@ -5,7 +5,7 @@ import { EvidenceCard } from "./EvidenceCard";
 import { NoticeBanner } from "./NoticeBanner";
 import { RiskBanner } from "./RiskBanner";
 
-export interface ChatActions {
+interface ChatActions {
   onEdit?: (entry: LogEntry) => void;
   onPick?: (entryId: string, field: UncertainField["field"], value: string) => void;
   onUndo?: (entryIds: string[]) => void;
@@ -13,7 +13,7 @@ export interface ChatActions {
 }
 
 /** 채팅 대화. 사용자 말은 오른쪽 말풍선, 앱 응답은 블록을 순서대로 쌓는다 (PRD R0) */
-export function ChatView({
+const ChatView = ({
   messages,
   entries,
   nowIso,
@@ -25,7 +25,7 @@ export function ChatView({
   nowIso: string;
   timeZone: string;
   actions?: ChatActions;
-}) {
+}) => {
   return (
     <ol className="space-y-4">
       {messages.map((message) =>
@@ -52,9 +52,9 @@ export function ChatView({
       )}
     </ol>
   );
-}
+};
 
-function Block({
+const Block = ({
   block,
   entries,
   nowIso,
@@ -66,7 +66,7 @@ function Block({
   nowIso: string;
   timeZone: string;
   actions: ChatActions;
-}) {
+}) => {
   const pick = (ids: readonly string[]) => ids.map((id) => entries[id]).filter((e): e is LogEntry => e !== undefined);
 
   switch (block.type) {
@@ -109,4 +109,7 @@ function Block({
     case "notice":
       return <NoticeBanner tone={block.tone} text={block.text} />;
   }
-}
+};
+
+export { ChatView };
+export type { ChatActions };

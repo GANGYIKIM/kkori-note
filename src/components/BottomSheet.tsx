@@ -8,7 +8,7 @@ import { CloseIcon } from "./Icons";
  * stickToBottom이면 열 때와 내용이 늘 때 맨 아래로 내린다(채팅의 최근 대화).
  * className은 바깥 틀에 붙는다(예: 넓은 화면에서 숨기기).
  */
-export function BottomSheet({
+const BottomSheet = ({
   open,
   title,
   onClose,
@@ -26,7 +26,7 @@ export function BottomSheet({
   className?: string;
   children: ReactNode;
   footer?: ReactNode;
-}) {
+}) => {
   const bodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -68,4 +68,6 @@ export function BottomSheet({
       </div>
     </div>
   );
-}
+};
+
+export { BottomSheet };

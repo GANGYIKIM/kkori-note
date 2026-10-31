@@ -30,7 +30,7 @@ const INITIAL_MESSAGES: ChatMessage[] = MAIN_CHAT_CASE_IDS.flatMap(
  * 메인 화면 (PRD R0): 기록 목록 + 진행 중 띠 + 하단 입력창 → 채팅. 넓은 화면은 기록 목록과 채팅을 나란히 둔다.
  * 지금은 가짜 데이터로 동작하는 화면 미리보기다. 저장소·파싱·상담 로직은 다음 단계에서 붙인다.
  */
-export function MainScreen() {
+const MainScreen = () => {
   const [entries, setEntries] = useState<LogEntry[]>(MOCK_ENTRIES);
   // 되돌리거나 지운 기록도 채팅 카드에서는 보여야 해서 따로 남긴다
   const [archived, setArchived] = useState<Record<string, LogEntry>>({});
@@ -41,17 +41,17 @@ export function MainScreen() {
   const chatEntries = useMemo(() => ({ ...archived, ...toEntryMap(entries) }), [archived, entries]);
   const ongoing = entries.filter((e) => isEpisodeKind(e.kind) && e.endedAt === null && e.durationSec === null);
 
-  function updateEntry(next: LogEntry) {
+  const updateEntry = (next: LogEntry) => {
     setEntries((list) => list.map((e) => (e.id === next.id ? next : e)));
-  }
+  };
 
-  function removeEntries(ids: string[]) {
+  const removeEntries = (ids: string[]) => {
     const removed = entries.filter((e) => ids.includes(e.id));
     setArchived((map) => ({ ...map, ...toEntryMap(removed) }));
     setEntries((list) => list.filter((e) => !ids.includes(e.id)));
-  }
+  };
 
-  function undo(ids: string[]) {
+  const undo = (ids: string[]) => {
     removeEntries(ids);
     setMessages((list) =>
       list.map((m) => ({
@@ -61,21 +61,21 @@ export function MainScreen() {
         ),
       })),
     );
-  }
+  };
 
-  function pick(entryId: string, field: UncertainField["field"], value: string) {
+  const pick = (entryId: string, field: UncertainField["field"], value: string) => {
     const target = entries.find((e) => e.id === entryId);
     if (!target) return;
     const numeric = field === "amountG" || field === "durationSec";
     updateEntry({ ...target, [field]: numeric ? Number(value) : value } as LogEntry);
-  }
+  };
 
-  function closeEpisode(episode: LogEntry) {
+  const closeEpisode = (episode: LogEntry) => {
     const durationSec = Math.max(0, Math.round((Date.parse(MOCK_NOW) - Date.parse(episode.occurredAt)) / 1000));
     updateEntry({ ...episode, endedAt: MOCK_NOW, durationSec });
-  }
+  };
 
-  function send(text: string) {
+  const send = (text: string) => {
     const createdAt = new Date().toISOString();
     setMessages((list) => [
       ...list,
@@ -88,7 +88,7 @@ export function MainScreen() {
         blocks: [{ type: "notice", tone: "info", text: "지금은 화면 미리보기라 입력한 문장을 처리하지 않아요." }],
       },
     ]);
-  }
+  };
 
   const chatTitle = `${MOCK_DOG.name}와 대화`;
   const chat = (
@@ -170,4 +170,6 @@ export function MainScreen() {
       />
     </div>
   );
-}
+};
+
+export { MainScreen };

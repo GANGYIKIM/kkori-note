@@ -8,7 +8,7 @@ const GRADE_STYLES: Record<RiskGrade, { box: string; icon: typeof AlertIcon }> =
 };
 
 /** 위험 등급 안내. 등급은 코드(assess)가 정하고, 문장은 등급 × 모드 고정 문장이다 (PRD R6) */
-export function RiskBanner({ grade, title, body }: { grade: RiskGrade; title: string; body: string }) {
+const RiskBanner = ({ grade, title, body }: { grade: RiskGrade; title: string; body: string }) => {
   const { box, icon: Icon } = GRADE_STYLES[grade];
   return (
     <div role={grade === "high" ? "alert" : "status"} className={`flex gap-3 rounded-2xl px-4 py-3 ${box}`}>
@@ -20,4 +20,6 @@ export function RiskBanner({ grade, title, body }: { grade: RiskGrade; title: st
       </div>
     </div>
   );
-}
+};
+
+export { RiskBanner };

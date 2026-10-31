@@ -85,7 +85,7 @@ const SECTIONS = [
   ["cases", "채팅 케이스"],
 ] as const;
 
-export function PreviewCatalog() {
+const PreviewCatalog = () => {
   const [draft, setDraft] = useState<LogEntry>(map["e-choco"]);
 
   return (
@@ -255,9 +255,9 @@ export function PreviewCatalog() {
       </Section>
     </div>
   );
-}
+};
 
-function Section({ id, title, note, children }: { id: string; title: string; note: string; children: ReactNode }) {
+const Section = ({ id, title, note, children }: { id: string; title: string; note: string; children: ReactNode }) => {
   return (
     <section
       id={id}
@@ -270,8 +270,10 @@ function Section({ id, title, note, children }: { id: string; title: string; not
       {children}
     </section>
   );
-}
+};
 
-function Frame({ children }: { children: ReactNode }) {
+const Frame = ({ children }: { children: ReactNode }) => {
   return <div className="rounded-2xl border border-border">{children}</div>;
-}
+};
+
+export { PreviewCatalog };

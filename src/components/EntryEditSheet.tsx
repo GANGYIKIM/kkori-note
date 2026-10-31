@@ -24,7 +24,7 @@ const DETAIL_PLACEHOLDER: Partial<Record<LogEntry["kind"], string>> = {
 };
 
 /** 기록 한 건의 칸을 고치는 폼. 칸은 값 목록에서만 고른다 (CLAUDE.md 규칙 4) */
-export function EntryEditForm({
+const EntryEditForm = ({
   entry,
   timeZone,
   onChange,
@@ -32,7 +32,7 @@ export function EntryEditForm({
   entry: LogEntry;
   timeZone: string;
   onChange: (entry: LogEntry) => void;
-}) {
+}) => {
   const set = (patch: Partial<LogEntry>) => onChange({ ...entry, ...patch });
   const minutes = entry.durationSec === null ? "" : String(Math.round(entry.durationSec / 60));
 
@@ -150,10 +150,10 @@ export function EntryEditForm({
       ) : null}
     </div>
   );
-}
+};
 
 /** 기록을 탭하면 열리는 칩 수정 시트 (PRD R0) */
-export function EntryEditSheet({
+const EntryEditSheet = ({
   entry,
   timeZone,
   onClose,
@@ -165,16 +165,16 @@ export function EntryEditSheet({
   onClose: () => void;
   onSave: (entry: LogEntry) => void;
   onDelete: (id: string) => void;
-}) {
+}) => {
   return (
     <BottomSheet open={entry !== null} title="기록 고치기" onClose={onClose}>
       {/* key로 기록이 바뀔 때마다 초안을 새로 만든다 */}
       {entry ? <EditBody key={entry.id} entry={entry} timeZone={timeZone} onSave={onSave} onDelete={onDelete} /> : null}
     </BottomSheet>
   );
-}
+};
 
-function EditBody({
+const EditBody = ({
   entry,
   timeZone,
   onSave,
@@ -184,7 +184,7 @@ function EditBody({
   timeZone: string;
   onSave: (entry: LogEntry) => void;
   onDelete: (id: string) => void;
-}) {
+}) => {
   const [draft, setDraft] = useState(entry);
   return (
     <div className="space-y-6">
@@ -207,18 +207,18 @@ function EditBody({
       </div>
     </div>
   );
-}
+};
 
-function Field({ label, children }: { label: string; children: ReactNode }) {
+const Field = ({ label, children }: { label: string; children: ReactNode }) => {
   return (
     <div className="space-y-2">
       <p className="text-sm font-bold text-muted">{label}</p>
       {children}
     </div>
   );
-}
+};
 
-function Options<T extends string>({
+const Options = <T extends string>({
   values,
   labels,
   selected,
@@ -228,7 +228,7 @@ function Options<T extends string>({
   labels: Record<T, string>;
   selected: T | null;
   onSelect: (value: T) => void;
-}) {
+}) => {
   return (
     <div className="flex flex-wrap gap-1.5">
       {values.map((value) => (
@@ -246,4 +246,6 @@ function Options<T extends string>({
       ))}
     </div>
   );
-}
+};
+
+export { EntryEditForm, EntryEditSheet };

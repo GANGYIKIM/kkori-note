@@ -11,7 +11,7 @@ import {
 } from "./values";
 
 /** 강아지 프로필. 한 마리 고정이지만 dogId 기준으로 설계해 추후 초대 기반 접근을 붙일 수 있게 한다. */
-export const DogSchema = z.object({
+const DogSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1).max(30),
   /** 나이(살). 추정 나이도 허용 */
@@ -20,10 +20,10 @@ export const DogSchema = z.object({
   /** 특이사항(알레르기, 기저질환 메모 등). 사용자가 직접 적는 자유 메모 */
   notes: z.string().max(500).default(""),
 });
-export type Dog = z.infer<typeof DogSchema>;
+type Dog = z.infer<typeof DogSchema>;
 
 /** 기록(LogEntry). 순간 기록과 에피소드 기록을 한 구조로 다룬다. */
-export const LogEntrySchema = z.object({
+const LogEntrySchema = z.object({
   id: z.string().min(1),
   dogId: z.string().min(1),
   kind: z.enum(ENTRY_KINDS),
@@ -56,22 +56,22 @@ export const LogEntrySchema = z.object({
   isDemo: z.boolean().default(false),
   createdAt: z.string().datetime({ offset: true }),
 });
-export type LogEntry = z.infer<typeof LogEntrySchema>;
+type LogEntry = z.infer<typeof LogEntrySchema>;
 
 /** 칩에서 확신이 낮은 칸. `?` 표시와 후보 칩으로 보여준다 (PRD R1, R8) */
-export const UncertainFieldSchema = z.object({
+const UncertainFieldSchema = z.object({
   entryId: z.string().min(1),
   field: z.enum(["kind", "occurredAt", "stoolState", "intensity", "durationSec", "amountG", "chocolateType"]),
   /** 후보 값. 값 목록의 값을 그대로 담는다 */
   candidates: z.array(z.string()).default([]),
 });
-export type UncertainField = z.infer<typeof UncertainFieldSchema>;
+type UncertainField = z.infer<typeof UncertainFieldSchema>;
 
 /**
  * 채팅 응답을 이루는 블록. 기록·상담·안전 안내를 한 메시지 안에 순서대로 담는다 (PRD R0, R1, R4, R6).
  * 숫자와 기록 목록이 들어가는 블록(evidence, episodes)은 코드가 만들고, LLM은 text 블록만 쓴다.
  */
-export const ChatBlockSchema = z.discriminatedUnion("type", [
+const ChatBlockSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("text"), text: z.string() }),
   /** 저장한 기록의 칩 카드. undone이면 되돌린 상태 */
   z.object({
@@ -96,12 +96,12 @@ export const ChatBlockSchema = z.discriminatedUnion("type", [
   /** 요청 한도 초과, 오류 같은 시스템 안내 */
   z.object({ type: z.literal("notice"), tone: z.enum(["info", "error"]), text: z.string() }),
 ]);
-export type ChatBlock = z.infer<typeof ChatBlockSchema>;
+type ChatBlock = z.infer<typeof ChatBlockSchema>;
 /** 기본값이 있는 칸을 생략할 수 있는 입력 모양 */
-export type ChatBlockInput = z.input<typeof ChatBlockSchema>;
+type ChatBlockInput = z.input<typeof ChatBlockSchema>;
 
 /** 채팅 메시지. 기록과 상담을 한 대화에 담는다. 이전 대화는 LLM에 넣지 않는다 (PRD R0) */
-export const ChatMessageSchema = z.object({
+const ChatMessageSchema = z.object({
   id: z.string().min(1),
   dogId: z.string().min(1),
   role: z.enum(["user", "assistant"]),
@@ -109,19 +109,30 @@ export const ChatMessageSchema = z.object({
   blocks: z.array(ChatBlockSchema).min(1),
   createdAt: z.string().datetime({ offset: true }),
 });
-export type ChatMessage = z.infer<typeof ChatMessageSchema>;
+type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
-export const SettingsSchema = z.object({
+const SettingsSchema = z.object({
   mode: z.enum(MODES).default("neutral"),
 });
-export type Settings = z.infer<typeof SettingsSchema>;
+type Settings = z.infer<typeof SettingsSchema>;
 
 /** 상담 메시지 */
-export const ConsultMessageSchema = z.object({
+const ConsultMessageSchema = z.object({
   id: z.string().min(1),
   dogId: z.string().min(1),
   role: z.enum(["user", "assistant"]),
   content: z.string(),
   createdAt: z.string().datetime({ offset: true }),
 });
-export type ConsultMessage = z.infer<typeof ConsultMessageSchema>;
+type ConsultMessage = z.infer<typeof ConsultMessageSchema>;
+
+export {
+  DogSchema,
+  LogEntrySchema,
+  UncertainFieldSchema,
+  ChatBlockSchema,
+  ChatMessageSchema,
+  SettingsSchema,
+  ConsultMessageSchema,
+};
+export type { Dog, LogEntry, UncertainField, ChatBlock, ChatBlockInput, ChatMessage, Settings, ConsultMessage };

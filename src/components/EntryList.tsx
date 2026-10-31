@@ -3,7 +3,7 @@ import type { LogEntry } from "@/lib/domain/types";
 import { EntryRow } from "./EntryRow";
 
 /** 메인 화면의 기록 목록. 현지 날짜별로 묶고 최신이 위 (PRD R0, R2) */
-export function EntryList({
+const EntryList = ({
   entries,
   nowIso,
   timeZone,
@@ -13,7 +13,7 @@ export function EntryList({
   nowIso: string;
   timeZone: string;
   onSelect?: (entry: LogEntry) => void;
-}) {
+}) => {
   const groups = groupByLocalDate(entries, timeZone);
 
   return (
@@ -34,4 +34,6 @@ export function EntryList({
       ))}
     </div>
   );
-}
+};
+
+export { EntryList };

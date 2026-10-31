@@ -7,7 +7,7 @@ import { EntryRow } from "@/components/EntryRow";
 const PREVIEW_COUNT = 4;
 
 /** 상담 근거 기록 카드. 범위·건수·목록은 코드가 만들고 LLM은 이 카드를 근거로 해석만 쓴다 (PRD R4) */
-export function EvidenceCard({
+const EvidenceCard = ({
   rangeLabel,
   summary,
   entries,
@@ -23,7 +23,7 @@ export function EvidenceCard({
   timeZone: string;
   onSelect?: (entry: LogEntry) => void;
   onExpand?: () => void;
-}) {
+}) => {
   const [showAll, setShowAll] = useState(false);
   const sorted = [...entries].sort((a, b) => b.occurredAt.localeCompare(a.occurredAt));
   const visible = showAll ? sorted : sorted.slice(0, PREVIEW_COUNT);
@@ -59,4 +59,6 @@ export function EvidenceCard({
       </div>
     </div>
   );
-}
+};
+
+export { EvidenceCard };

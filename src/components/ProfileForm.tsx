@@ -7,14 +7,14 @@ import { DogSchema, type Dog } from "@/lib/domain/types";
 
 type Status = "loading" | "ready" | "saved" | "error";
 
-function toNumberOrNull(value: string): number | null {
+const toNumberOrNull = (value: string): number | null => {
   const trimmed = value.trim();
   if (trimmed === "") return null;
   const parsed = Number(trimmed);
   return Number.isFinite(parsed) ? parsed : null;
-}
+};
 
-export function ProfileForm() {
+const ProfileForm = () => {
   const [status, setStatus] = useState<Status>("loading");
   const [dogId, setDogId] = useState<string>("");
   const [name, setName] = useState("");
@@ -48,7 +48,7 @@ export function ProfileForm() {
     };
   }, []);
 
-  async function handleSubmit(event: FormEvent) {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     const candidate: Dog = {
       id: dogId,
@@ -73,7 +73,7 @@ export function ProfileForm() {
       setMessage("저장하지 못했어요. 잠시 후 다시 시도해 주세요.");
       setStatus("error");
     }
-  }
+  };
 
   const inputClass =
     "mt-1 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-base outline-none focus:border-accent";
@@ -147,4 +147,6 @@ export function ProfileForm() {
       ) : null}
     </form>
   );
-}
+};
+
+export { ProfileForm };

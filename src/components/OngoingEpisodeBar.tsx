@@ -4,7 +4,7 @@ import { LABELS } from "@/lib/domain/values";
 import { KIND_STYLES } from "./KindTag";
 
 /** 메인 위쪽 "진행 중" 띠. 열린 에피소드마다 한 줄, [끝] 버튼으로 닫는다 (PRD R1) */
-export function OngoingEpisodeBar({
+const OngoingEpisodeBar = ({
   episodes,
   nowIso,
   onClose,
@@ -12,7 +12,7 @@ export function OngoingEpisodeBar({
   episodes: readonly LogEntry[];
   nowIso: string;
   onClose?: (entry: LogEntry) => void;
-}) {
+}) => {
   if (episodes.length === 0) return null;
   return (
     <ul className="space-y-2">
@@ -42,4 +42,6 @@ export function OngoingEpisodeBar({
       ))}
     </ul>
   );
-}
+};
+
+export { OngoingEpisodeBar };

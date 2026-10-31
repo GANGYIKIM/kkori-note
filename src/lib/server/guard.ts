@@ -6,18 +6,18 @@ import { serverConfig } from "./config";
 // 모듈 단위 싱글톤 (서버 인스턴스 메모리)
 const store = createMemoryStore();
 
-export function getClientKey(request: Request): string {
+const getClientKey = (request: Request): string => {
   const forwarded = request.headers.get("x-forwarded-for");
   const ip = forwarded?.split(",")[0]?.trim() || request.headers.get("x-real-ip") || "unknown";
   return `ip:${ip}`;
-}
+};
 
 /**
  * LLM을 호출하기 전에 항상 통과해야 하는 검사.
  * 입력 길이 → 클라이언트별 횟수 → 전체 횟수 순서. 통과 못 하면 LLM을 호출하지 않고 응답을 돌려준다.
  * 통과하면 null.
  */
-export function guardLlmRequest(request: Request, text: string): NextResponse | null {
+const guardLlmRequest = (request: Request, text: string): NextResponse | null => {
   if (text.length === 0) {
     return NextResponse.json({ error: "empty_input", message: "내용을 입력해 주세요." }, { status: 400 });
   }
@@ -61,4 +61,6 @@ export function guardLlmRequest(request: Request, text: string): NextResponse | 
   }
 
   return null;
-}
+};
+
+export { getClientKey, guardLlmRequest };

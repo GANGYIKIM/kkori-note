@@ -7,12 +7,12 @@
  * 그래서 Store 인터페이스 뒤에 숨겨 두었다.
  */
 
-export interface RateLimitStore {
+interface RateLimitStore {
   /** key의 현재 윈도우 카운트를 1 올리고 올린 뒤의 값과 윈도우 종료 시각(ms)을 돌려준다. */
   hit(key: string, windowMs: number, now: number): { count: number; resetAt: number };
 }
 
-export function createMemoryStore(): RateLimitStore {
+const createMemoryStore = (): RateLimitStore => {
   const buckets = new Map<string, { count: number; resetAt: number }>();
   return {
     hit(key, windowMs, now) {
@@ -30,22 +30,25 @@ export function createMemoryStore(): RateLimitStore {
       return current;
     },
   };
-}
+};
 
-export interface RateLimitResult {
+interface RateLimitResult {
   allowed: boolean;
   remaining: number;
   /** 제한이 풀리는 시각(ms epoch) */
   resetAt: number;
 }
 
-export function checkRateLimit(
+const checkRateLimit = (
   store: RateLimitStore,
   key: string,
   limit: number,
   windowMs: number,
   now: number = Date.now(),
-): RateLimitResult {
+): RateLimitResult => {
   const { count, resetAt } = store.hit(key, windowMs, now);
   return { allowed: count <= limit, remaining: Math.max(0, limit - count), resetAt };
-}
+};
+
+export { createMemoryStore, checkRateLimit };
+export type { RateLimitStore, RateLimitResult };

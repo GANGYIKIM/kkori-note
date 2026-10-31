@@ -7,7 +7,7 @@ import { KindTag } from "./KindTag";
  * 메인 목록과 근거 카드에서 쓰는 기록 한 줄. 탭하면 칩 수정 시트를 연다.
  * showDate는 여러 날짜가 섞이는 근거 카드에서 쓴다.
  */
-export function EntryRow({
+const EntryRow = ({
   entry,
   timeZone,
   onSelect,
@@ -19,7 +19,7 @@ export function EntryRow({
   onSelect?: (entry: LogEntry) => void;
   compact?: boolean;
   showDate?: boolean;
-}) {
+}) => {
   const parts = summarizeEntry(entry);
   const content = (
     <>
@@ -52,4 +52,6 @@ export function EntryRow({
       {content}
     </button>
   );
-}
+};
+
+export { EntryRow };

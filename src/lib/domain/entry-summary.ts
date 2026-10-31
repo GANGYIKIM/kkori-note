@@ -3,7 +3,7 @@ import type { LogEntry } from "./types";
 import { LABELS, isEpisodeKind } from "./values";
 
 /** 기록 한 건을 칩·목록에 보여줄 짧은 조각들로 바꾼다. 예: ["무름"], ["밀크", "20g"], ["강도 중", "진행 중"] */
-export function summarizeEntry(entry: LogEntry): string[] {
+const summarizeEntry = (entry: LogEntry): string[] => {
   const parts: string[] = [];
 
   if (entry.kind === "poop") {
@@ -25,4 +25,6 @@ export function summarizeEntry(entry: LogEntry): string[] {
   if (entry.detail && !(entry.kind === "picked_up" && entry.riskFood)) parts.push(entry.detail);
 
   return parts;
-}
+};
+
+export { summarizeEntry };

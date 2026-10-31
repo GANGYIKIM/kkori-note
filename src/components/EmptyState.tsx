@@ -1,14 +1,6 @@
 import type { ReactNode } from "react";
 
-export function EmptyState({
-  title,
-  description,
-  action,
-}: {
-  title: string;
-  description?: string;
-  action?: ReactNode;
-}) {
+const EmptyState = ({ title, description, action }: { title: string; description?: string; action?: ReactNode }) => {
   return (
     <div className="rounded-2xl bg-surface px-5 py-10 text-center">
       <p className="font-bold">{title}</p>
@@ -16,4 +8,6 @@ export function EmptyState({
       {action ? <div className="mt-5">{action}</div> : null}
     </div>
   );
-}
+};
+
+export { EmptyState };

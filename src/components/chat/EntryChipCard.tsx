@@ -17,7 +17,7 @@ const FIELD_LABELS: Record<UncertainField["field"], string> = {
 };
 
 /** 후보 값을 화면 라벨로. 값 목록에 있는 칸은 LABELS를 쓴다 */
-export function candidateLabel(field: UncertainField["field"], value: string): string {
+const candidateLabel = (field: UncertainField["field"], value: string): string => {
   const table: Partial<Record<UncertainField["field"], Record<string, string>>> = {
     kind: LABELS.entryKind,
     stoolState: LABELS.stoolState,
@@ -25,15 +25,15 @@ export function candidateLabel(field: UncertainField["field"], value: string): s
     chocolateType: LABELS.chocolateType,
   };
   return table[field]?.[value] ?? value;
-}
+};
 
 /** 아직 비어 있는 칸만 `?`로 보여준다. 사용자가 채운 칸은 일반 칩이 된다 */
-function isStillEmpty(entry: LogEntry, field: UncertainField["field"]): boolean {
+const isStillEmpty = (entry: LogEntry, field: UncertainField["field"]): boolean => {
   return entry[field] === null;
-}
+};
 
 /** 저장된 기록의 칩 카드 (PRD R1). 칩은 즉시 저장되고, 칸을 탭해 고치거나 되돌린다 */
-export function EntryChipCard({
+const EntryChipCard = ({
   entries,
   uncertain = [],
   undone = false,
@@ -49,7 +49,7 @@ export function EntryChipCard({
   onEdit?: (entry: LogEntry) => void;
   onPick?: (entryId: string, field: UncertainField["field"], value: string) => void;
   onUndo?: (entryIds: string[]) => void;
-}) {
+}) => {
   return (
     <div className={`overflow-hidden rounded-2xl border border-border bg-background ${undone ? "opacity-60" : ""}`}>
       <ul className="divide-y divide-border">
@@ -131,8 +131,10 @@ export function EntryChipCard({
       </div>
     </div>
   );
-}
+};
 
-function Chip({ children }: { children: ReactNode }) {
+const Chip = ({ children }: { children: ReactNode }) => {
   return <span className="inline-flex h-7 items-center rounded-lg bg-surface px-2 text-sm">{children}</span>;
-}
+};
+
+export { candidateLabel, EntryChipCard };
