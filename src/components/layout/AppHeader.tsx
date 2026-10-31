@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { SettingsIcon } from "./Icons";
+import { SettingsIcon } from "@/components/common/Icons";
 
 /** 메인 상단. 강아지 이름과 설정 아이콘 (PRD R0) */
 const AppHeader = ({ dogName }: { dogName: string | null }) => {

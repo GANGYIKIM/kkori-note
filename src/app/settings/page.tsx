@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { BackIcon } from "@/components/Icons";
-import { ProfileForm } from "@/components/ProfileForm";
+import { BackIcon } from "@/components/common/Icons";
+import { ProfileForm } from "@/components/settings/ProfileForm";
 
 export default function SettingsPage() {
   return (

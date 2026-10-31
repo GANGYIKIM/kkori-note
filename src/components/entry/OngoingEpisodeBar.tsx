@@ -1,7 +1,6 @@
 import { elapsedMinutes } from "@/lib/domain/datetime";
 import type { LogEntry } from "@/lib/domain/types";
-import { LABELS } from "@/lib/domain/values";
-import { KIND_STYLES } from "./KindTag";
+import { KIND_STYLES, LABELS } from "@/lib/domain/values";
 
 /** 메인 위쪽 "진행 중" 띠. 열린 에피소드마다 한 줄, [끝] 버튼으로 닫는다 (PRD R1) */
 const OngoingEpisodeBar = ({

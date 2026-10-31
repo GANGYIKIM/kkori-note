@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 import { formatLocalTime } from "@/lib/domain/datetime";
 import { summarizeEntry } from "@/lib/domain/entry-summary";
 import type { LogEntry, UncertainField } from "@/lib/domain/types";
-import { LABELS } from "@/lib/domain/values";
-import { CheckCircleIcon, UndoIcon } from "@/components/Icons";
-import { KindTag } from "@/components/KindTag";
+import { KIND_STYLES, LABELS } from "@/lib/domain/values";
+import { CheckCircleIcon, UndoIcon } from "@/components/common/Icons";
+import { Tag } from "@/components/common/Tag";
 
 const FIELD_LABELS: Record<UncertainField["field"], string> = {
   kind: "종류",
@@ -63,7 +63,7 @@ const EntryChipCard = ({
                 onClick={() => onEdit?.(entry)}
                 className="flex w-full flex-wrap items-center gap-1.5 text-left"
               >
-                <KindTag kind={entry.kind} />
+                <Tag className={KIND_STYLES[entry.kind].tag}>{LABELS.entryKind[entry.kind]}</Tag>
                 <Chip>
                   {formatLocalTime(entry.occurredAt, timeZone)}
                   {entry.timeEstimated ? <span className="ml-1 text-muted">추정</span> : null}

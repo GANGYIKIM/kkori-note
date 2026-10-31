@@ -12,15 +12,15 @@ import {
   MOCK_TIME_ZONE,
   toEntryMap,
 } from "@/lib/mock/data";
-import { AppHeader } from "./AppHeader";
-import { BottomSheet } from "./BottomSheet";
-import { ChatComposer, ChatLauncher } from "./chat/ChatComposer";
-import { ChatPanel } from "./chat/ChatPanel";
-import { ChatView } from "./chat/ChatView";
-import { EmptyState } from "./EmptyState";
-import { EntryEditSheet } from "./EntryEditSheet";
-import { EntryList } from "./EntryList";
-import { OngoingEpisodeBar } from "./OngoingEpisodeBar";
+import { AppHeader } from "@/components/layout/AppHeader";
+import { BottomSheet } from "@/components/layout/BottomSheet";
+import { MessageComposer, ComposerLauncher } from "@/components/chat/MessageComposer";
+import { SidePanel } from "@/components/layout/SidePanel";
+import { Conversation } from "@/components/chat/Conversation";
+import { EmptyState } from "@/components/common/EmptyState";
+import { EditSheet } from "@/components/entry/EditSheet";
+import { DateGroupedList } from "@/components/entry/DateGroupedList";
+import { OngoingEpisodeBar } from "@/components/entry/OngoingEpisodeBar";
 
 const INITIAL_MESSAGES: ChatMessage[] = MAIN_CHAT_CASE_IDS.flatMap(
   (id) => CHAT_CASES.find((c) => c.id === id)?.messages ?? [],
@@ -30,7 +30,7 @@ const INITIAL_MESSAGES: ChatMessage[] = MAIN_CHAT_CASE_IDS.flatMap(
  * 메인 화면 (PRD R0): 기록 목록 + 진행 중 띠 + 하단 입력창 → 채팅. 넓은 화면은 기록 목록과 채팅을 나란히 둔다.
  * 지금은 가짜 데이터로 동작하는 화면 미리보기다. 저장소·파싱·상담 로직은 다음 단계에서 붙인다.
  */
-const MainScreen = () => {
+const Home = () => {
   const [entries, setEntries] = useState<LogEntry[]>(MOCK_ENTRIES);
   // 되돌리거나 지운 기록도 채팅 카드에서는 보여야 해서 따로 남긴다
   const [archived, setArchived] = useState<Record<string, LogEntry>>({});
@@ -92,7 +92,7 @@ const MainScreen = () => {
 
   const chatTitle = `${MOCK_DOG.name}와 대화`;
   const chat = (
-    <ChatView
+    <Conversation
       messages={messages}
       entries={chatEntries}
       nowIso={MOCK_NOW}
@@ -128,19 +128,19 @@ const MainScreen = () => {
               }
             />
           ) : (
-            <EntryList entries={entries} nowIso={MOCK_NOW} timeZone={MOCK_TIME_ZONE} onSelect={setEditing} />
+            <DateGroupedList entries={entries} nowIso={MOCK_NOW} timeZone={MOCK_TIME_ZONE} onSelect={setEditing} />
           )}
         </main>
 
         <div className="fixed inset-x-0 bottom-0 z-20 mx-auto w-full max-w-md bg-linear-to-t from-background via-background to-background/0 px-4 pt-6 pb-4 lg:hidden">
-          <ChatLauncher onOpen={() => setChatOpen(true)} />
+          <ComposerLauncher onOpen={() => setChatOpen(true)} />
         </div>
       </div>
 
       <aside className="hidden min-h-0 border-l border-border lg:block">
-        <ChatPanel title={chatTitle} footer={<ChatComposer onSend={send} />}>
+        <SidePanel title={chatTitle} footer={<MessageComposer onSend={send} />}>
           {chat}
-        </ChatPanel>
+        </SidePanel>
       </aside>
 
       <BottomSheet
@@ -150,12 +150,12 @@ const MainScreen = () => {
         full
         stickToBottom
         className="lg:hidden"
-        footer={<ChatComposer onSend={send} autoFocus />}
+        footer={<MessageComposer onSend={send} autoFocus />}
       >
         {chat}
       </BottomSheet>
 
-      <EntryEditSheet
+      <EditSheet
         entry={editing}
         timeZone={MOCK_TIME_ZONE}
         onClose={() => setEditing(null)}
@@ -172,4 +172,4 @@ const MainScreen = () => {
   );
 };
 
-export { MainScreen };
+export { Home };

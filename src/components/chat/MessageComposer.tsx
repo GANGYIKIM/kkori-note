@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { SendIcon } from "@/components/Icons";
+import { SendIcon } from "@/components/common/Icons";
 
 const COMPOSER_PLACEHOLDER = "기록하거나 물어보세요";
 
 /** 채팅 입력창. 보내면 onSend로 문장을 넘긴다 */
-const ChatComposer = ({ onSend, autoFocus = false }: { onSend: (text: string) => void; autoFocus?: boolean }) => {
+const MessageComposer = ({ onSend, autoFocus = false }: { onSend: (text: string) => void; autoFocus?: boolean }) => {
   const [text, setText] = useState("");
 
   const handleSubmit = (event: FormEvent) => {
@@ -41,7 +41,7 @@ const ChatComposer = ({ onSend, autoFocus = false }: { onSend: (text: string) =>
 };
 
 /** 메인 화면 아래의 입력창 모양 버튼. 누르면 채팅이 열린다 (PRD R0) */
-const ChatLauncher = ({ onOpen }: { onOpen: () => void }) => {
+const ComposerLauncher = ({ onOpen }: { onOpen: () => void }) => {
   return (
     <button
       type="button"
@@ -56,4 +56,4 @@ const ChatLauncher = ({ onOpen }: { onOpen: () => void }) => {
   );
 };
 
-export { COMPOSER_PLACEHOLDER, ChatComposer, ChatLauncher };
+export { COMPOSER_PLACEHOLDER, MessageComposer, ComposerLauncher };

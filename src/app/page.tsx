@@ -1,5 +1,5 @@
-import { MainScreen } from "@/components/MainScreen";
+import { Home } from "@/components/main/Home";
 
-export default function Home() {
-  return <MainScreen />;
+export default function HomePage() {
+  return <Home />;
 }

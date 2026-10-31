@@ -1,8 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { formatLocalTime, formatShortDate } from "@/lib/domain/datetime";
+import { summarizeEntry } from "@/lib/domain/entry-summary";
 import type { LogEntry } from "@/lib/domain/types";
-import { EntryRow } from "@/components/EntryRow";
+import { KIND_STYLES, LABELS } from "@/lib/domain/values";
+import { ListRow } from "@/components/common/ListRow";
+import { Tag } from "@/components/common/Tag";
 
 const PREVIEW_COUNT = 4;
 
@@ -40,7 +44,22 @@ const EvidenceCard = ({
         <ul className="px-3">
           {visible.map((entry) => (
             <li key={entry.id}>
-              <EntryRow entry={entry} timeZone={timeZone} onSelect={onSelect} compact showDate />
+              <ListRow
+                time={
+                  <>
+                    {formatShortDate(entry.occurredAt, timeZone)} {formatLocalTime(entry.occurredAt, timeZone)}
+                    {entry.timeEstimated ? <span className="block text-[11px] leading-none">추정</span> : null}
+                  </>
+                }
+                tag={<Tag className={KIND_STYLES[entry.kind].tag}>{LABELS.entryKind[entry.kind]}</Tag>}
+                trailing={entry.isDemo ? "샘플" : null}
+                onClick={onSelect ? () => onSelect(entry) : undefined}
+                compact
+                wideTime
+              >
+                {summarizeEntry(entry).join(" · ") ||
+                  (entry.kind === "poop" ? <span className="text-muted">상태 미입력</span> : null)}
+              </ListRow>
             </li>
           ))}
         </ul>

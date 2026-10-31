@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
-import { CloseIcon } from "./Icons";
+import { CloseIcon } from "@/components/common/Icons";
 
 /**
  * 아래에서 올라오는 시트. full이면 화면 전체(채팅), 아니면 내용 높이만큼(칩 수정).

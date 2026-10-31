@@ -2,7 +2,8 @@ import type { ChatBlock, ChatMessage, LogEntry, UncertainField } from "@/lib/dom
 import { EntryChipCard } from "./EntryChipCard";
 import { EpisodeCard } from "./EpisodeCard";
 import { EvidenceCard } from "./EvidenceCard";
-import { NoticeBanner } from "./NoticeBanner";
+import { Banner } from "@/components/common/Banner";
+import { AlertIcon, InfoIcon } from "@/components/common/Icons";
 import { RiskBanner } from "./RiskBanner";
 
 interface ChatActions {
@@ -13,7 +14,7 @@ interface ChatActions {
 }
 
 /** 채팅 대화. 사용자 말은 오른쪽 말풍선, 앱 응답은 블록을 순서대로 쌓는다 (PRD R0) */
-const ChatView = ({
+const Conversation = ({
   messages,
   entries,
   nowIso,
@@ -107,9 +108,16 @@ const Block = ({
     case "risk":
       return <RiskBanner grade={block.grade} title={block.title} body={block.body} />;
     case "notice":
-      return <NoticeBanner tone={block.tone} text={block.text} />;
+      return (
+        <Banner
+          tone={block.tone === "error" ? "danger" : "neutral"}
+          icon={block.tone === "error" ? <AlertIcon width={16} height={16} /> : <InfoIcon width={16} height={16} />}
+        >
+          {block.text}
+        </Banner>
+      );
   }
 };
 
-export { ChatView };
+export { Conversation };
 export type { ChatActions };

@@ -12,7 +12,7 @@ import {
   STOOL_STATES,
   isEpisodeKind,
 } from "@/lib/domain/values";
-import { BottomSheet } from "./BottomSheet";
+import { BottomSheet } from "@/components/layout/BottomSheet";
 
 const DETAIL_PLACEHOLDER: Partial<Record<LogEntry["kind"], string>> = {
   meal: "예: 사료 반 컵",
@@ -24,7 +24,7 @@ const DETAIL_PLACEHOLDER: Partial<Record<LogEntry["kind"], string>> = {
 };
 
 /** 기록 한 건의 칸을 고치는 폼. 칸은 값 목록에서만 고른다 (CLAUDE.md 규칙 4) */
-const EntryEditForm = ({
+const EditForm = ({
   entry,
   timeZone,
   onChange,
@@ -153,7 +153,7 @@ const EntryEditForm = ({
 };
 
 /** 기록을 탭하면 열리는 칩 수정 시트 (PRD R0) */
-const EntryEditSheet = ({
+const EditSheet = ({
   entry,
   timeZone,
   onClose,
@@ -188,7 +188,7 @@ const EditBody = ({
   const [draft, setDraft] = useState(entry);
   return (
     <div className="space-y-6">
-      <EntryEditForm entry={draft} timeZone={timeZone} onChange={setDraft} />
+      <EditForm entry={draft} timeZone={timeZone} onChange={setDraft} />
       <div className="flex gap-2">
         <button
           type="button"
@@ -248,4 +248,4 @@ const Options = <T extends string>({
   );
 };
 
-export { EntryEditForm, EntryEditSheet };
+export { EditForm, EditSheet };

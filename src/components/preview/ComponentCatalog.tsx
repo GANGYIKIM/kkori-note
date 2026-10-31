@@ -3,22 +3,21 @@
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { LogEntrySchema, type LogEntry } from "@/lib/domain/types";
-import { ENTRY_KINDS, LABELS, MODES, type Mode, type RiskGrade } from "@/lib/domain/values";
+import { ENTRY_KINDS, KIND_STYLES, LABELS, MODES, type Mode, type RiskGrade } from "@/lib/domain/values";
 import { CHAT_CASES, MOCK_ENTRIES, MOCK_NOW, MOCK_TIME_ZONE, toEntryMap } from "@/lib/mock/data";
-import { BackIcon } from "@/components/Icons";
-import { ChatComposer, ChatLauncher } from "@/components/chat/ChatComposer";
-import { ChatView } from "@/components/chat/ChatView";
+import { AlertIcon, BackIcon, InfoIcon } from "@/components/common/Icons";
+import { MessageComposer, ComposerLauncher } from "@/components/chat/MessageComposer";
+import { Conversation } from "@/components/chat/Conversation";
 import { EntryChipCard } from "@/components/chat/EntryChipCard";
 import { EpisodeCard } from "@/components/chat/EpisodeCard";
 import { EvidenceCard } from "@/components/chat/EvidenceCard";
-import { NoticeBanner } from "@/components/chat/NoticeBanner";
+import { Banner } from "@/components/common/Banner";
 import { RiskBanner } from "@/components/chat/RiskBanner";
-import { EmptyState } from "@/components/EmptyState";
-import { EntryEditForm } from "@/components/EntryEditSheet";
-import { EntryList } from "@/components/EntryList";
-import { EntryRow } from "@/components/EntryRow";
-import { KindTag } from "@/components/KindTag";
-import { OngoingEpisodeBar } from "@/components/OngoingEpisodeBar";
+import { EmptyState } from "@/components/common/EmptyState";
+import { EditForm } from "@/components/entry/EditSheet";
+import { DateGroupedList } from "@/components/entry/DateGroupedList";
+import { Tag } from "@/components/common/Tag";
+import { OngoingEpisodeBar } from "@/components/entry/OngoingEpisodeBar";
 
 const map = toEntryMap(MOCK_ENTRIES);
 const tz = MOCK_TIME_ZONE;
@@ -85,7 +84,7 @@ const SECTIONS = [
   ["cases", "채팅 케이스"],
 ] as const;
 
-const PreviewCatalog = () => {
+const ComponentCatalog = () => {
   const [draft, setDraft] = useState<LogEntry>(map["e-choco"]);
 
   return (
@@ -119,20 +118,24 @@ const PreviewCatalog = () => {
         </div>
         <div className="flex flex-wrap gap-1.5">
           {ENTRY_KINDS.map((kind) => (
-            <KindTag key={kind} kind={kind} />
+            <Tag key={kind} className={KIND_STYLES[kind].tag}>
+              {LABELS.entryKind[kind]}
+            </Tag>
           ))}
         </div>
       </Section>
 
       <Section id="rows" title="기록 목록" note="R0, R2 · 현지 날짜별 묶음, 추정 시각, 상태 미입력, 샘플 표시">
         <Frame>
-          <EntryRow entry={map["e-poop-soft"]} timeZone={tz} onSelect={() => {}} />
-          <EntryRow entry={map["e-meal"]} timeZone={tz} onSelect={() => {}} />
-          <EntryRow entry={map["e-poop-unknown"]} timeZone={tz} onSelect={() => {}} />
-          <EntryRow entry={{ ...map["e-28-walk"], isDemo: true }} timeZone={tz} onSelect={() => {}} />
+          <DateGroupedList
+            entries={[map["e-poop-soft"], map["e-meal"], map["e-poop-unknown"], { ...map["e-28-walk"], isDemo: true }]}
+            nowIso={MOCK_NOW}
+            timeZone={tz}
+            onSelect={() => {}}
+          />
         </Frame>
         <Frame>
-          <EntryList entries={MOCK_ENTRIES.slice(8, 15)} nowIso={MOCK_NOW} timeZone={tz} onSelect={() => {}} />
+          <DateGroupedList entries={MOCK_ENTRIES.slice(8, 15)} nowIso={MOCK_NOW} timeZone={tz} onSelect={() => {}} />
         </Frame>
       </Section>
 
@@ -165,8 +168,8 @@ const PreviewCatalog = () => {
       </Section>
 
       <Section id="input" title="입력창" note="R0 · 메인의 열기 버튼, 채팅 안의 입력창">
-        <ChatLauncher onOpen={() => {}} />
-        <ChatComposer onSend={() => {}} />
+        <ComposerLauncher onOpen={() => {}} />
+        <MessageComposer onSend={() => {}} />
       </Section>
 
       <Section id="chips" title="칩 카드" note="R1 · 즉시 저장, ? 칸과 후보, 여러 장, 되돌림">
@@ -211,17 +214,18 @@ const PreviewCatalog = () => {
       </Section>
 
       <Section id="notice" title="시스템 안내" note="R9 · 요청 한도, 오류">
-        <NoticeBanner
-          tone="error"
-          text="오늘 사용할 수 있는 AI 상담 횟수를 모두 사용했어요. 기록은 계속 남길 수 있어요."
-        />
-        <NoticeBanner tone="info" text="지금은 화면 미리보기라 입력한 문장을 처리하지 않아요." />
+        <Banner tone="danger" icon={<AlertIcon width={16} height={16} />}>
+          오늘 사용할 수 있는 AI 상담 횟수를 모두 사용했어요. 기록은 계속 남길 수 있어요.
+        </Banner>
+        <Banner icon={<InfoIcon width={16} height={16} />}>
+          지금은 화면 미리보기라 입력한 문장을 처리하지 않아요.
+        </Banner>
       </Section>
 
       <Section id="edit" title="칩 수정 폼" note="R0, R1 · 기록을 탭하면 열리는 시트의 내용. 종류에 따라 칸이 바뀐다">
         <Frame>
           <div className="p-3">
-            <EntryEditForm entry={draft} timeZone={tz} onChange={setDraft} />
+            <EditForm entry={draft} timeZone={tz} onChange={setDraft} />
           </div>
         </Frame>
         <div className="flex flex-wrap gap-1.5">
@@ -247,7 +251,7 @@ const PreviewCatalog = () => {
             </div>
             <Frame>
               <div className="p-3">
-                <ChatView messages={c.messages} entries={c.entries} nowIso={MOCK_NOW} timeZone={tz} />
+                <Conversation messages={c.messages} entries={c.entries} nowIso={MOCK_NOW} timeZone={tz} />
               </div>
             </Frame>
           </article>
@@ -276,4 +280,4 @@ const Frame = ({ children }: { children: ReactNode }) => {
   return <div className="rounded-2xl border border-border">{children}</div>;
 };
 
-export { PreviewCatalog };
+export { ComponentCatalog };

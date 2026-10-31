@@ -3,10 +3,10 @@
 import { useEffect, useRef, type ReactNode } from "react";
 
 /**
- * 넓은 화면에서 메인 오른쪽에 늘 열려 있는 채팅 패널 (PRD R0).
- * 좁은 화면의 채팅 시트와 같은 모양이고, 내용이 늘면 맨 아래로 내린다.
+ * 넓은 화면에서 본문 옆에 늘 열려 있는 패널. 제목 · 본문 · 하단(입력창 등)으로 나뉜다. 지금은 채팅에 쓴다 (PRD R0).
+ * 좁은 화면의 BottomSheet와 같은 모양이고, 내용이 늘면 맨 아래로 내린다.
  */
-const ChatPanel = ({ title, children, footer }: { title: string; children: ReactNode; footer: ReactNode }) => {
+const SidePanel = ({ title, children, footer }: { title: string; children: ReactNode; footer: ReactNode }) => {
   const bodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -26,4 +26,4 @@ const ChatPanel = ({ title, children, footer }: { title: string; children: React
   );
 };
 
-export { ChatPanel };
+export { SidePanel };
