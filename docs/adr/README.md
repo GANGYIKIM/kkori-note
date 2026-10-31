@@ -28,3 +28,4 @@
 | [0006](0006-plan-and-r-scoped-dev-log.md) | `plan.md`는 큰 우선순위만, 세부 계획과 결과는 R 단위 dev-log에. `/planning`·`/next-plan`으로 다룬다 | Accepted | 없음 |
 | [0007](0007-import-path-and-no-barrel.md) | 배럴 파일을 두지 않는다. import는 폴더 밖 `@/`, 같은 폴더 안 `./`. ESLint로 강제 | Accepted | 없음 |
 | [0008](0008-const-functions-and-bottom-exports.md) | 함수는 `const` 화살표 함수, export는 파일 맨 아래에 모음. `src/app`의 Next 파일만 `export default function`. ESLint로 강제 | Accepted | 없음 |
+| [0009](0009-component-folders.md) | 컴포넌트는 `layout`(뼈대) · `common`(작은·공용, 로직 모름) · 도메인 폴더(화면 전용 큰 단위)로. 폴더 목록은 테스트로 강제 | Accepted | 없음 |
