@@ -29,3 +29,4 @@
 | [0007](0007-import-path-and-no-barrel.md) | 배럴 파일을 두지 않는다. import는 폴더 밖 `@/`, 같은 폴더 안 `./`. ESLint로 강제 | Accepted | 없음 |
 | [0008](0008-const-functions-and-bottom-exports.md) | 함수는 `const` 화살표 함수, export는 파일 맨 아래에 모음. `src/app`의 Next 파일만 `export default function`. ESLint로 강제 | Accepted | 없음 |
 | [0009](0009-component-folders.md) | 컴포넌트는 `layout`(뼈대) · `common`(작은·공용, 로직 모름) · 도메인 폴더(화면 전용 큰 단위)로. 폴더 목록은 테스트로 강제 | Accepted | 없음 |
+| [0010](0010-preview-catalog.md) | 미리보기는 Storybook 없이 직접 만든다. 컴포넌트 탭과 PRD 장면 탭으로 나누고, 변형은 컴포넌트 옆 `X.preview.tsx`에 | Accepted | 없음 |
