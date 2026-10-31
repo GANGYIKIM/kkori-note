@@ -12,7 +12,7 @@ import {
   type Dog,
   type LogEntry,
 } from "@/lib/domain/types";
-import { LABELS, STOOL_STATES } from "@/lib/domain/values";
+import { LABELS, MODES, STOOL_STATES, type Mode, type RiskGrade } from "@/lib/domain/values";
 
 const MOCK_TIME_ZONE = "Asia/Seoul";
 const MOCK_NOW = "2026-10-29T03:00:00.000Z";
@@ -184,7 +184,7 @@ interface ChatCase {
   entries: Record<string, LogEntry>;
 }
 
-const base = toEntryMap(MOCK_ENTRIES);
+const MOCK_ENTRY_MAP = toEntryMap(MOCK_ENTRIES);
 const lastWeek = poopSummary("2026-10-23");
 
 const CHAT_CASES: ChatCase[] = [
@@ -192,7 +192,7 @@ const CHAT_CASES: ChatCase[] = [
     id: "other",
     title: "기록도 상담도 아닌 말",
     prd: "R1 의도: 기타",
-    entries: base,
+    entries: MOCK_ENTRY_MAP,
     messages: [
       user("안녕!"),
       bot({
@@ -205,7 +205,7 @@ const CHAT_CASES: ChatCase[] = [
     id: "record-simple",
     title: "1. 단순 기록",
     prd: "R1, R3",
-    entries: base,
+    entries: MOCK_ENTRY_MAP,
     messages: [
       user("방금 배변했는데 무른 편이야"),
       bot({ type: "text", text: "초코의 배변을 기록했어요." }, { type: "entries", entryIds: ["e-poop-soft"] }),
@@ -215,7 +215,7 @@ const CHAT_CASES: ChatCase[] = [
     id: "record-uncertain",
     title: "2. 빈 칸이 있는 기록",
     prd: "R1, R8 (? 표시와 후보 칩)",
-    entries: base,
+    entries: MOCK_ENTRY_MAP,
     messages: [
       user("응가 했어"),
       bot(
@@ -232,7 +232,7 @@ const CHAT_CASES: ChatCase[] = [
     id: "record-multiple",
     title: "3. 한 문장에 기록 여러 개",
     prd: "R1, R2 (추정 시각)",
-    entries: base,
+    entries: MOCK_ENTRY_MAP,
     messages: [
       user("밥 먹고 산책했어"),
       bot(
@@ -245,7 +245,10 @@ const CHAT_CASES: ChatCase[] = [
     id: "episode",
     title: "4. 에피소드 열고 닫기",
     prd: "R1 에피소드",
-    entries: { ...base, "e-seizure-today": { ...base["e-seizure-today"], endedAt: null, durationSec: null } },
+    entries: {
+      ...MOCK_ENTRY_MAP,
+      "e-seizure-today": { ...MOCK_ENTRY_MAP["e-seizure-today"], endedAt: null, durationSec: null },
+    },
     messages: [
       user("발작했어"),
       bot(
@@ -258,7 +261,7 @@ const CHAT_CASES: ChatCase[] = [
     id: "episode-close",
     title: "4-2. 에피소드 닫기",
     prd: "R1 에피소드 닫기 규칙",
-    entries: base,
+    entries: MOCK_ENTRY_MAP,
     messages: [
       user("끝났어, 2분쯤"),
       bot(
@@ -271,7 +274,7 @@ const CHAT_CASES: ChatCase[] = [
     id: "consult-lookup",
     title: "5. 조회 상담",
     prd: "R4 (근거 카드는 코드, 해석은 LLM)",
-    entries: base,
+    entries: MOCK_ENTRY_MAP,
     messages: [
       user("지난주 배변 어땠어?"),
       bot(
@@ -293,7 +296,7 @@ const CHAT_CASES: ChatCase[] = [
     id: "record-and-consult",
     title: "6. 기록 + 상담",
     prd: "R4 기록+상담 응답 순서",
-    entries: base,
+    entries: MOCK_ENTRY_MAP,
     messages: [
       user("오늘 설사했는데 왜 그럴까?"),
       bot(
@@ -320,7 +323,7 @@ const CHAT_CASES: ChatCase[] = [
     id: "risk-unknown",
     title: "7. 위험 기록 (양 모름 → 🔴)",
     prd: "R3 예외, R6 (정보 부족하면 고위험)",
-    entries: base,
+    entries: MOCK_ENTRY_MAP,
     messages: [
       user("초코가 초코 먹었어"),
       bot(
@@ -347,7 +350,7 @@ const CHAT_CASES: ChatCase[] = [
     id: "risk-updated",
     title: "7-2. 양·종류 보충 → 재판정 (무던 모드)",
     prd: "R1 예외, R6 등급 × 모드 문장",
-    entries: { ...base, "e-choco": CHOCO_UPDATED },
+    entries: { ...MOCK_ENTRY_MAP, "e-choco": CHOCO_UPDATED },
     messages: [
       user("밀크초콜릿 반 개, 20g쯤"),
       bot(
@@ -366,7 +369,7 @@ const CHAT_CASES: ChatCase[] = [
     id: "risk-caution",
     title: "7-3. 경계 등급 예시 (중립 모드)",
     prd: "R6 🟡는 모든 모드에 전화 상담 포함",
-    entries: { ...base, "e-choco": { ...CHOCO_UPDATED, chocolateType: "dark", amountG: 15 } },
+    entries: { ...MOCK_ENTRY_MAP, "e-choco": { ...CHOCO_UPDATED, chocolateType: "dark", amountG: 15 } },
     messages: [
       user("다크초콜릿 15g쯤 먹었어"),
       bot(
@@ -385,7 +388,7 @@ const CHAT_CASES: ChatCase[] = [
     id: "episodes-lookup",
     title: "8. 에피소드 모아 보기",
     prd: "R4 수락 기준 (에피소드 카드)",
-    entries: base,
+    entries: MOCK_ENTRY_MAP,
     messages: [
       user("발작 기록 모아서 보여줘"),
       bot(
@@ -398,7 +401,7 @@ const CHAT_CASES: ChatCase[] = [
     id: "undo",
     title: "9. 되돌린 기록",
     prd: "R1 칩 즉시 저장 + 되돌리기",
-    entries: { ...base, [UNDONE_WALK.id]: UNDONE_WALK },
+    entries: { ...MOCK_ENTRY_MAP, [UNDONE_WALK.id]: UNDONE_WALK },
     messages: [
       user("산책 다녀왔어"),
       bot(
@@ -411,7 +414,7 @@ const CHAT_CASES: ChatCase[] = [
     id: "rate-limited",
     title: "10. 요청 한도 초과",
     prd: "R9, R1 (LLM 없이도 기록은 저장)",
-    entries: base,
+    entries: MOCK_ENTRY_MAP,
     messages: [
       user("요즘 컨디션 어때 보여?"),
       bot({
@@ -436,5 +439,50 @@ const MAIN_CHAT_CASE_IDS = [
   "episodes-lookup",
 ] as const;
 
-export { MOCK_TIME_ZONE, MOCK_NOW, MOCK_DOG, MOCK_ENTRIES, toEntryMap, CHAT_CASES, MAIN_CHAT_CASE_IDS };
+/** PRD R6의 등급 × 모드 문장 예시 (초콜릿). 실제 문장 표는 안전 판단 단계에서 코드로 옮긴다 */
+const RISK_COPY_EXAMPLES: Record<RiskGrade, Record<Mode, { title: string; body: string }>> = {
+  high: Object.fromEntries(
+    MODES.map((m) => [
+      m,
+      {
+        title: "지금 가까운 동물병원에 연락해 주세요",
+        body: "시간이 중요해요. 야간이면 24시간 동물병원에 연락해 주세요. (모든 모드 동일)",
+      },
+    ]),
+  ) as Record<Mode, { title: string; body: string }>,
+  caution: {
+    overprotective: {
+      title: "빨리 병원에 전화해 상담받아 보세요",
+      body: "먹은 양과 지금 상태를 말씀하시면 병원에서 바로 와야 할지 알려줄 거예요.",
+    },
+    neutral: { title: "병원에 전화로 상담받아 보시길 권해요", body: "몸무게에 비해 주의가 필요한 양이에요." },
+    easygoing: {
+      title: "다니시는 병원에 전화로 한번 물어보세요",
+      body: "주의가 필요한 양이라 확인해 두면 안심이 돼요.",
+    },
+  },
+  low: {
+    overprotective: {
+      title: "지금은 위험 수치 아래예요",
+      body: "그래도 6~12시간 동안 구토·설사·흥분이 있는지 지켜봐 주시고, 걱정되면 병원에 연락해 주세요.",
+    },
+    neutral: { title: "위험 수치 아래예요", body: "6~12시간 동안 구토·설사·흥분을 지켜봐 주세요." },
+    easygoing: {
+      title: "이 양이면 크게 위험하지 않을 수 있어요",
+      body: "6~12시간 정도 지켜보시고, 다니시는 병원에 문의해 보시면 더 좋아요.",
+    },
+  },
+};
+
+export {
+  MOCK_TIME_ZONE,
+  MOCK_NOW,
+  MOCK_DOG,
+  MOCK_ENTRIES,
+  MOCK_ENTRY_MAP,
+  toEntryMap,
+  CHAT_CASES,
+  MAIN_CHAT_CASE_IDS,
+  RISK_COPY_EXAMPLES,
+};
 export type { ChatCase };
