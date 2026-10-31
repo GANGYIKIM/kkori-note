@@ -21,6 +21,32 @@ const eslintConfig = defineConfig([
       "better-tailwindcss/no-duplicate-classes": "warn",
     },
   },
+  {
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "ExportAllDeclaration",
+          message: "배럴 파일을 만들지 않아요. 쓰는 쪽에서 원본 파일을 직접 import해 주세요.",
+        },
+        {
+          selector: "ExportNamedDeclaration[source]",
+          message: "배럴 파일을 만들지 않아요. 쓰는 쪽에서 원본 파일을 직접 import해 주세요.",
+        },
+      ],
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["../*"],
+              message: "상위 폴더는 @/ 별칭으로 import해 주세요. 같은 폴더 안만 ./를 써요.",
+            },
+          ],
+        },
+      ],
+    },
+  },
   prettier,
   // Override default ignores of eslint-config-next.
   globalIgnores([

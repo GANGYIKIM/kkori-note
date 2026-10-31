@@ -1,5 +1,5 @@
 import { LABELS, type RiskGrade } from "@/lib/domain/values";
-import { AlertIcon, CheckCircleIcon, InfoIcon } from "../Icons";
+import { AlertIcon, CheckCircleIcon, InfoIcon } from "@/components/Icons";
 
 const GRADE_STYLES: Record<RiskGrade, { box: string; icon: typeof AlertIcon }> = {
   high: { box: "bg-danger/10 text-danger", icon: AlertIcon },

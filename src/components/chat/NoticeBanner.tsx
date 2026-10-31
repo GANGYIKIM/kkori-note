@@ -1,4 +1,4 @@
-import { AlertIcon, InfoIcon } from "../Icons";
+import { AlertIcon, InfoIcon } from "@/components/Icons";
 
 /** 요청 한도 초과, 오류 같은 시스템 안내 */
 export function NoticeBanner({ tone, text }: { tone: "info" | "error"; text: string }) {

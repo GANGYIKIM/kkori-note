@@ -1,4 +1,4 @@
-import type { ConsultMessage, Dog, LogEntry, Settings } from "../domain/types";
+import type { ConsultMessage, Dog, LogEntry, Settings } from "@/lib/domain/types";
 
 /** 기간 조회 옵션. from/to는 ISO 8601, 양 끝 포함 */
 export interface ListEntriesOptions {

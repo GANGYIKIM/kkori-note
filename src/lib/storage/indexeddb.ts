@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from "dexie";
-import { SettingsSchema, type ConsultMessage, type Dog, type LogEntry, type Settings } from "../domain/types";
+import { SettingsSchema, type ConsultMessage, type Dog, type LogEntry, type Settings } from "@/lib/domain/types";
 import type { ListEntriesOptions, Storage } from "./storage";
 
 interface SettingsRow extends Settings {

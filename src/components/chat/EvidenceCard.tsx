@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { LogEntry } from "@/lib/domain/types";
-import { EntryRow } from "../EntryRow";
+import { EntryRow } from "@/components/EntryRow";
 
 const PREVIEW_COUNT = 4;
 

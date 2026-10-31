@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { SendIcon } from "../Icons";
+import { SendIcon } from "@/components/Icons";
 
 export const COMPOSER_PLACEHOLDER = "기록하거나 물어보세요";
 

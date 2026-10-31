@@ -3,8 +3,8 @@ import { formatLocalTime } from "@/lib/domain/datetime";
 import { summarizeEntry } from "@/lib/domain/entry-summary";
 import type { LogEntry, UncertainField } from "@/lib/domain/types";
 import { LABELS } from "@/lib/domain/values";
-import { CheckCircleIcon, UndoIcon } from "../Icons";
-import { KindTag } from "../KindTag";
+import { CheckCircleIcon, UndoIcon } from "@/components/Icons";
+import { KindTag } from "@/components/KindTag";
 
 const FIELD_LABELS: Record<UncertainField["field"], string> = {
   kind: "종류",
