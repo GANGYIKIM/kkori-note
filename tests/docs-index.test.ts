@@ -43,6 +43,10 @@ describe.skipIf(rFolders.length === 0).each(rFolders)("docs/dev-log/%s 하위 �
   const files = readdirSync(dir).filter(isIndexed);
   const links = linksIn(dir);
 
+  it("R 문서가 있다", () => {
+    expect(existsSync(join(dir, "README.md"))).toBe(true);
+  });
+
   it.each(files)("%s 가 R 문서에 링크돼 있다", (file) => {
     expect(links).toContain(file);
   });
