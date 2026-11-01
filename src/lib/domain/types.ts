@@ -28,11 +28,11 @@ const LogEntrySchema = z.object({
   dogId: z.string().min(1),
   kind: z.enum(ENTRY_KINDS),
   /** 일어난(시작한) 시각. ISO 8601 */
-  occurredAt: z.string().datetime({ offset: true }),
+  occurredAt: z.iso.datetime({ offset: true }),
   /** "어제 저녁쯤"처럼 시각을 추정했으면 true. 칩에 "추정"으로 표시한다 (PRD R2) */
   timeEstimated: z.boolean().default(false),
   /** 에피소드가 끝난 시각. 비어 있으면 진행 중(열림) */
-  endedAt: z.string().datetime({ offset: true }).nullable().default(null),
+  endedAt: z.iso.datetime({ offset: true }).nullable().default(null),
   /** 지속시간(초). 사용자가 "2분쯤"이라고만 말한 경우를 위해 endedAt과 별도 */
   durationSec: z.number().int().min(0).nullable().default(null),
   stoolState: z.enum(STOOL_STATES).nullable().default(null),
@@ -54,7 +54,7 @@ const LogEntrySchema = z.object({
   attachmentIds: z.array(z.string()).default([]),
   /** 데모 데이터로 넣은 기록. 샘플만 지울 때 쓴다 (PRD R10) */
   isDemo: z.boolean().default(false),
-  createdAt: z.string().datetime({ offset: true }),
+  createdAt: z.iso.datetime({ offset: true }),
 });
 type LogEntry = z.infer<typeof LogEntrySchema>;
 
@@ -107,7 +107,7 @@ const ChatMessageSchema = z.object({
   role: z.enum(["user", "assistant"]),
   /** user 메시지는 text 블록 하나 */
   blocks: z.array(ChatBlockSchema).min(1),
-  createdAt: z.string().datetime({ offset: true }),
+  createdAt: z.iso.datetime({ offset: true }),
 });
 type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
@@ -122,7 +122,7 @@ const ConsultMessageSchema = z.object({
   dogId: z.string().min(1),
   role: z.enum(["user", "assistant"]),
   content: z.string(),
-  createdAt: z.string().datetime({ offset: true }),
+  createdAt: z.iso.datetime({ offset: true }),
 });
 type ConsultMessage = z.infer<typeof ConsultMessageSchema>;
 
