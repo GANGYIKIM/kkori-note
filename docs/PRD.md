@@ -29,23 +29,25 @@
 
 ## 4. Requirements
 
-요구사항은 영역별 파일에 있다. 작업할 R의 파일만 읽는다. R 번호는 고정 ID라 파일을 옮겨도 바꾸지 않고, 없앤 번호는 다시 쓰지 않는다. "열린 질문"이 표시된 R은 `docs/prd/open-questions.md`도 본다.
+요구사항은 R마다 `docs/prd/R<n>.md`에 있다. 작업할 R의 파일만 읽는다. 하위 요구사항은 `R<n>-k`, 수락 기준은 `R<n>-k.m`으로 번호를 붙인다(ADR-0011). R 번호는 고정 ID라 파일을 옮겨도 바꾸지 않고, 없앤 번호는 다시 쓰지 않는다. "열린 질문"이 표시된 R은 `docs/prd/open-questions.md`도 본다.
 
 | R | 내용 | 우선순위 | 파일 | 열린 질문 |
 |---|---|---|---|---|
-| R0 | 화면 구조 | P1 | `prd/screens.md` | |
-| R1 | 채팅 입력: 기록과 상담 나누기, 기록 저장 | P1 | `prd/records.md` | |
-| R2 | 시각 처리 | P1 | `prd/records.md` | |
-| R3 | 짧은 기록 응답 | P1 | `prd/records.md` | |
-| R4 | 상담 (조회·요약, 원인 추측, 상황 판단) | P1 | `prd/consult.md` | |
-| R5 | 모드 (과보호 / 중립 / 무던) | P1 | `prd/consult.md` | 블로킹 |
-| R6 | 안전 판단 `assess()` | P1 | `prd/safety.md` | 블로킹 |
-| R7 | 프로필, 저장, 기반 | P1 | `prd/platform.md` | |
-| R8 | 표현 정규화 | P1 | `prd/records.md` | 블로킹 |
-| R9 | 배포와 비용 방어 | P1 | `prd/platform.md` | |
-| R10 | 데모 데이터 | P1 | `prd/platform.md` | |
+| R0 | 화면 구조 | P1 | `prd/R0.md` | |
+| R1 | 채팅 입력: 기록과 상담 나누기, 기록 저장 | P1 | `prd/R1.md` | 비블로킹 |
+| R2 | 시각 처리 | P1 | `prd/R2.md` | |
+| R3 | 짧은 기록 응답 | P1 | `prd/R3.md` | |
+| R4 | 상담 (조회·요약, 원인 추측, 상황 판단) | P1 | `prd/R4.md` | |
+| R5 | 모드 (과보호 / 중립 / 무던) | P1 | `prd/R5.md` | 블로킹 |
+| R6 | 안전 판단 `assess()` | P1 | `prd/R6.md` | 블로킹 |
+| R7 | 프로필, 저장, 기반 | P1 | `prd/R7.md` | |
+| R8 | 표현 정규화 | P1 | `prd/R8.md` | 블로킹 |
+| R9 | 배포와 비용 방어 | P1 | `prd/R9.md` | |
+| R10 | 데모 데이터 | P1 | `prd/R10.md` | |
+| R11 | 기록 종류와 항목 | P1 | `prd/R11.md` | 블로킹 |
+| R12 | 에피소드 | P1 | `prd/R12.md` | 블로킹 |
 
-P2~P4 기능은 각 영역 파일의 "나중에"에 있다. 기술 스택은 `prd/platform.md`.
+P2~P4 기능은 각 R 파일의 "나중에"에 있다. 기술 스택은 `prd/R7.md`.
 
 ## 5. Success Metrics
 

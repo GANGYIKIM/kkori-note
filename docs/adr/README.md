@@ -21,7 +21,7 @@
 | ADR | 결정 | Status | 관련 R |
 |---|---|---|---|
 | [0001](0001-llm-model-selection.md) | 기록 파싱은 gpt-6-luna, 상담은 gpt-6.1-terra. 모델명은 환경변수로 | Accepted | R1, R4, R8 |
-| [0002](0002-doc-structure-for-agent.md) | CLAUDE.md는 항상 필요한 것만, PRD는 영역별 파일로, 경로 규칙은 `.claude/rules/`로 | Accepted (ADR 작성 시점은 0004로, 일정·PLAN은 0006으로 대체) | 없음 |
+| [0002](0002-doc-structure-for-agent.md) | CLAUDE.md는 항상 필요한 것만, PRD는 영역별 파일로, 경로 규칙은 `.claude/rules/`로 | Accepted (ADR 작성 시점은 0004로, 일정·PLAN은 0006으로, PRD 영역별 파일은 0011로 대체) | 없음 |
 | [0003](0003-no-global-state-library.md) | 전역 상태 라이브러리를 쓰지 않고 React 기본 상태로 | Accepted | 없음 |
 | [0004](0004-auto-write-docs-after-decision.md) | 결정이 나면 문서는 묻지 않고 쓴다. ADR은 고치지 않고 대체한다. 추측은 표시한다. 색인을 둔다 | Accepted | 없음 |
 | [0005](0005-precommit-and-ci-checks.md) | husky pre-commit과 GitHub Actions에서 lint·typecheck·test를 모두 돌린다. LLM 측정은 `npm run metrics`로 따로 | Accepted | 없음 |
@@ -30,3 +30,4 @@
 | [0008](0008-const-functions-and-bottom-exports.md) | 함수는 `const` 화살표 함수, export는 파일 맨 아래에 모음. `src/app`의 Next 파일만 `export default function`. ESLint로 강제 | Accepted | 없음 |
 | [0009](0009-component-folders.md) | 컴포넌트는 `layout`(뼈대) · `common`(작은·공용, 로직 모름) · 도메인 폴더(화면 전용 큰 단위)로. 폴더 목록은 테스트로 강제 | Accepted | 없음 |
 | [0010](0010-preview-catalog.md) | 미리보기는 Storybook 없이 직접 만든다. 컴포넌트 탭과 PRD 장면 탭으로 나누고, 변형은 컴포넌트 옆 `X.preview.tsx`에 | Accepted | 없음 |
+| [0011](0011-r-scoped-prd-and-requirement-ids.md) | PRD는 R마다 파일 하나. 하위 요구사항 `R<n>-k`·수락 기준 `R<n>-k.m` 번호, R 문서의 요구사항별 개발 표, 검사 테스트로 빈 곳을 막는다 | Accepted | 없음 |
