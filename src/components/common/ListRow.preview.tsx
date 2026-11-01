@@ -1,9 +1,10 @@
-import { KIND_STYLES, LABELS } from "@/lib/domain/values";
+import { kindLabel } from "@/lib/domain/kinds";
+import { kindStyle } from "@/lib/domain/values";
 import type { Variant } from "@/components/preview/variant";
 import { ListRow } from "./ListRow";
 import { Tag } from "./Tag";
 
-const mealTag = <Tag className={KIND_STYLES.meal.tag}>{LABELS.entryKind.meal}</Tag>;
+const mealTag = <Tag className={kindStyle("meal").tag}>{kindLabel("meal")}</Tag>;
 
 const variants: Variant[] = [
   {

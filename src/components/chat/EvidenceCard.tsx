@@ -4,7 +4,8 @@ import { useState } from "react";
 import { formatLocalTime, formatShortDate } from "@/lib/domain/datetime";
 import { summarizeEntry } from "@/lib/domain/entry-summary";
 import type { LogEntry } from "@/lib/domain/types";
-import { KIND_STYLES, LABELS } from "@/lib/domain/values";
+import { kindLabel } from "@/lib/domain/kinds";
+import { kindStyle } from "@/lib/domain/values";
 import { ListRow } from "@/components/common/ListRow";
 import { Tag } from "@/components/common/Tag";
 
@@ -48,17 +49,19 @@ const EvidenceCard = ({
                 time={
                   <>
                     {formatShortDate(entry.occurredAt, timeZone)} {formatLocalTime(entry.occurredAt, timeZone)}
-                    {entry.timeEstimated ? <span className="block text-[11px] leading-none">추정</span> : null}
+                    {entry.timePrecision === "estimated" ? (
+                      <span className="block text-[11px] leading-none">추정</span>
+                    ) : null}
                   </>
                 }
-                tag={<Tag className={KIND_STYLES[entry.kind].tag}>{LABELS.entryKind[entry.kind]}</Tag>}
+                tag={<Tag className={kindStyle(entry.kindId).tag}>{kindLabel(entry.kindId)}</Tag>}
                 trailing={entry.isDemo ? "샘플" : null}
                 onClick={onSelect ? () => onSelect(entry) : undefined}
                 compact
                 wideTime
               >
                 {summarizeEntry(entry).join(" · ") ||
-                  (entry.kind === "poop" ? <span className="text-muted">상태 미입력</span> : null)}
+                  (entry.kindId === "poop" ? <span className="text-muted">상태 미입력</span> : null)}
               </ListRow>
             </li>
           ))}

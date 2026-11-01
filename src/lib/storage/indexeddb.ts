@@ -1,5 +1,5 @@
 import Dexie, { type EntityTable } from "dexie";
-import { SettingsSchema, type ConsultMessage, type Dog, type LogEntry, type Settings } from "@/lib/domain/types";
+import { SettingsSchema, type ChatMessage, type Dog, type LogEntry, type Settings } from "@/lib/domain/types";
 import type { ListEntriesOptions, Storage } from "./storage";
 
 interface SettingsRow extends Settings {
@@ -9,7 +9,7 @@ interface SettingsRow extends Settings {
 class KkoriDB extends Dexie {
   dogs!: EntityTable<Dog, "id">;
   entries!: EntityTable<LogEntry, "id">;
-  messages!: EntityTable<ConsultMessage, "id">;
+  messages!: EntityTable<ChatMessage, "id">;
   settings!: EntityTable<SettingsRow, "key">;
 
   constructor() {
@@ -21,6 +21,13 @@ class KkoriDB extends Dexie {
       messages: "id, dogId, createdAt",
       settings: "key",
     });
+    // 버전 1은 개발 중 데이터뿐이라 옮기지 않고 지운다 (ADR-0012)
+    this.version(2)
+      .stores({ entries: "id, dogId, kindId, occurredAt, [dogId+occurredAt]" })
+      .upgrade(async (tx) => {
+        await tx.table("entries").clear();
+        await tx.table("messages").clear();
+      });
   }
 }
 
@@ -56,17 +63,17 @@ const createIndexedDbStorage = (): Storage => {
       return rows
         .filter((e) => (options.from ? e.occurredAt >= options.from : true))
         .filter((e) => (options.to ? e.occurredAt <= options.to : true))
-        .filter((e) => (options.kinds ? options.kinds.includes(e.kind) : true))
+        .filter((e) => (options.kindIds ? options.kindIds.includes(e.kindId) : true))
         .sort((a, b) => a.occurredAt.localeCompare(b.occurredAt));
     },
     async deleteEntry(id) {
       await db.entries.delete(id);
     },
 
-    async saveConsultMessage(message) {
+    async saveChatMessage(message) {
       await db.messages.put(message);
     },
-    async listConsultMessages(dogId) {
+    async listChatMessages(dogId) {
       const rows = await db.messages.where("dogId").equals(dogId).toArray();
       return rows.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
     },

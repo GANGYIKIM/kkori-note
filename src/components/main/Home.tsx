@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { ChatMessage, LogEntry, UncertainField } from "@/lib/domain/types";
-import { isEpisodeKind } from "@/lib/domain/values";
+import { findField, findKind, isEpisodeKind } from "@/lib/domain/kinds";
 import {
   CHAT_CASES,
   MAIN_CHAT_CASE_IDS,
@@ -39,7 +39,7 @@ const Home = () => {
   const [editing, setEditing] = useState<LogEntry | null>(null);
 
   const chatEntries = useMemo(() => ({ ...archived, ...toEntryMap(entries) }), [archived, entries]);
-  const ongoing = entries.filter((e) => isEpisodeKind(e.kind) && e.endedAt === null && e.durationSec === null);
+  const ongoing = entries.filter((e) => isEpisodeKind(e.kindId) && e.endedAt === null && e.durationSec === null);
 
   const updateEntry = (next: LogEntry) => {
     setEntries((list) => list.map((e) => (e.id === next.id ? next : e)));
@@ -66,8 +66,14 @@ const Home = () => {
   const pick = (entryId: string, field: UncertainField["field"], value: string) => {
     const target = entries.find((e) => e.id === entryId);
     if (!target) return;
-    const numeric = field === "amountG" || field === "durationSec";
-    updateEntry({ ...target, [field]: numeric ? Number(value) : value } as LogEntry);
+    if (field === "kindId" || field === "occurredAt") {
+      updateEntry({ ...target, [field]: value });
+    } else if (field === "durationSec") {
+      updateEntry({ ...target, durationSec: Number(value) });
+    } else {
+      const numeric = findField(findKind(target.kindId), field)?.type === "number";
+      updateEntry({ ...target, values: { ...target.values, [field]: numeric ? Number(value) : value } });
+    }
   };
 
   const closeEpisode = (episode: LogEntry) => {

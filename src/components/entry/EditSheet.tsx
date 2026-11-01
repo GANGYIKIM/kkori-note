@@ -3,18 +3,10 @@
 import { useState, type ReactNode } from "react";
 import { formatLocalTime, localDateKey } from "@/lib/domain/datetime";
 import type { LogEntry } from "@/lib/domain/types";
-import {
-  CHOCOLATE_TYPES,
-  ENTRY_KINDS,
-  INTENSITIES,
-  LABELS,
-  RISK_FOODS,
-  STOOL_STATES,
-  isEpisodeKind,
-} from "@/lib/domain/values";
+import { DEFAULT_KINDS, findKind, type EntryValues, type FieldDef, type Option } from "@/lib/domain/kinds";
 import { BottomSheet } from "@/components/layout/BottomSheet";
 
-const DETAIL_PLACEHOLDER: Partial<Record<LogEntry["kind"], string>> = {
+const DETAIL_PLACEHOLDER: Record<string, string> = {
   meal: "예: 사료 반 컵",
   snack: "예: 닭가슴살 육포",
   walk: "예: 다른 강아지랑 잘 놀았어",
@@ -23,7 +15,26 @@ const DETAIL_PLACEHOLDER: Partial<Record<LogEntry["kind"], string>> = {
   note: "메모",
 };
 
-/** 기록 한 건의 칸을 고치는 폼. 칸은 값 목록에서만 고른다 (CLAUDE.md 규칙 4) */
+const KIND_OPTIONS: Option[] = DEFAULT_KINDS.map((k) => ({ id: k.id, label: k.label }));
+
+/** 초콜릿 종류는 초콜릿일 때만, 양은 위험 음식을 골랐을 때만 묻는다 */
+const isHidden = (field: FieldDef, values: EntryValues): boolean => {
+  if (field.id === "chocolateType") return values.riskFood !== "chocolate";
+  if (field.id === "amountG") return values.riskFood === undefined;
+  return false;
+};
+
+/** 저장할 때 지금 종류에서 보이는 칸의 값만 남긴다 */
+const visibleValues = (entry: LogEntry): LogEntry => {
+  const fields = (findKind(entry.kindId)?.fields ?? []).filter((f) => !isHidden(f, entry.values));
+  const kept = Object.entries(entry.values).filter(([fieldId]) => fields.some((f) => f.id === fieldId));
+  return { ...entry, values: Object.fromEntries(kept) };
+};
+
+/**
+ * 기록 한 건의 칸을 고치는 폼. 칸과 값 목록은 종류 정의에서 읽는다 (CLAUDE.md 규칙 4, ADR-0012).
+ * 폼이 열려 있는 동안 값은 종류마다 따로 보관한다. 다른 종류로 갔다가 돌아오면 그 종류에서 고른 값이 다시 보인다.
+ */
 const EditForm = ({
   entry,
   timeZone,
@@ -33,55 +44,46 @@ const EditForm = ({
   timeZone: string;
   onChange: (entry: LogEntry) => void;
 }) => {
+  const [valuesByKind, setValuesByKind] = useState<Record<string, EntryValues>>({});
   const set = (patch: Partial<LogEntry>) => onChange({ ...entry, ...patch });
+  const changeKind = (kindId: string) => {
+    if (kindId === entry.kindId) return;
+    setValuesByKind((saved) => ({ ...saved, [entry.kindId]: entry.values }));
+    set({ kindId, values: valuesByKind[kindId] ?? {} });
+  };
+  const setValue = (fieldId: string, value: string | number | undefined) => {
+    const rest = Object.fromEntries(Object.entries(entry.values).filter(([id]) => id !== fieldId));
+    set({ values: value === undefined ? rest : { ...rest, [fieldId]: value } });
+  };
+  const kind = findKind(entry.kindId);
+  const fields = (kind?.fields ?? []).filter((f) => !isHidden(f, entry.values));
   const minutes = entry.durationSec === null ? "" : String(Math.round(entry.durationSec / 60));
 
   return (
     <div className="space-y-5">
       <Field label="종류">
-        <Options
-          values={ENTRY_KINDS}
-          labels={LABELS.entryKind}
-          selected={entry.kind}
-          onSelect={(kind) => set({ kind })}
-        />
+        <Options options={KIND_OPTIONS} selected={entry.kindId} onSelect={changeKind} />
       </Field>
 
-      <Field label={entry.timeEstimated ? "시각 (추정)" : "시각"}>
+      <Field label={entry.timePrecision === "estimated" ? "시각 (추정)" : "시각"}>
         <input
           type="datetime-local"
           value={`${localDateKey(entry.occurredAt, timeZone)}T${formatLocalTime(entry.occurredAt, timeZone)}`}
           onChange={(e) => {
             const date = new Date(e.target.value);
-            if (!Number.isNaN(date.getTime())) set({ occurredAt: date.toISOString(), timeEstimated: false });
+            if (!Number.isNaN(date.getTime())) set({ occurredAt: date.toISOString(), timePrecision: "exact" });
           }}
           className="h-11 w-full rounded-lg border border-border bg-background px-3"
         />
       </Field>
 
-      {entry.kind === "poop" ? (
-        <Field label="상태">
-          <Options
-            values={STOOL_STATES}
-            labels={LABELS.stoolState}
-            selected={entry.stoolState}
-            onSelect={(stoolState) => set({ stoolState })}
-          />
-        </Field>
-      ) : null}
+      {fields
+        .filter((f) => f.type !== "text")
+        .map((field) => (
+          <ValueField key={field.id} field={field} value={entry.values[field.id]} onChange={setValue} />
+        ))}
 
-      {isEpisodeKind(entry.kind) ? (
-        <Field label="강도">
-          <Options
-            values={INTENSITIES}
-            labels={LABELS.intensity}
-            selected={entry.intensity}
-            onSelect={(intensity) => set({ intensity })}
-          />
-        </Field>
-      ) : null}
-
-      {isEpisodeKind(entry.kind) || entry.kind === "walk" ? (
+      {kind?.episode || entry.kindId === "walk" ? (
         <Field label="지속시간 (분)">
           <input
             inputMode="numeric"
@@ -96,60 +98,75 @@ const EditForm = ({
         </Field>
       ) : null}
 
-      {entry.kind === "picked_up" ? (
-        <>
-          <Field label="위험 음식">
-            <Options
-              values={RISK_FOODS}
-              labels={LABELS.riskFood}
-              selected={entry.riskFood}
-              onSelect={(riskFood) => set({ riskFood: riskFood === entry.riskFood ? null : riskFood })}
-            />
-          </Field>
-          {entry.riskFood === "chocolate" ? (
-            <Field label="초콜릿 종류">
-              <Options
-                values={CHOCOLATE_TYPES}
-                labels={LABELS.chocolateType}
-                selected={entry.chocolateType}
-                onSelect={(chocolateType) => set({ chocolateType })}
-              />
-            </Field>
-          ) : null}
-          {entry.riskFood ? (
-            <Field label="먹은 양 (g)">
-              <input
-                inputMode="decimal"
-                value={entry.amountG ?? ""}
-                onChange={(e) => {
-                  const n = Number(e.target.value);
-                  set({ amountG: e.target.value.trim() === "" || !Number.isFinite(n) ? null : n });
-                }}
-                placeholder="모름"
-                className="h-11 w-full rounded-lg border border-border bg-background px-3"
-              />
-            </Field>
-          ) : null}
-        </>
-      ) : null}
-
-      {DETAIL_PLACEHOLDER[entry.kind] ? (
-        <Field label="내용">
-          <input
-            value={entry.detail ?? ""}
-            onChange={(e) => set({ detail: e.target.value || null })}
-            placeholder={DETAIL_PLACEHOLDER[entry.kind]}
-            maxLength={200}
-            className="h-11 w-full rounded-lg border border-border bg-background px-3"
+      {fields
+        .filter((f) => f.type === "text")
+        .map((field) => (
+          <ValueField
+            key={field.id}
+            field={field}
+            value={entry.values[field.id]}
+            placeholder={DETAIL_PLACEHOLDER[entry.kindId]}
+            onChange={setValue}
           />
-        </Field>
-      ) : null}
+        ))}
 
       {entry.rawText ? (
         <p className="rounded-lg bg-surface px-3 py-2 text-sm text-muted">원문: “{entry.rawText}”</p>
       ) : null}
     </div>
   );
+};
+
+const ValueField = ({
+  field,
+  value,
+  placeholder,
+  onChange,
+}: {
+  field: FieldDef;
+  value: string | number | undefined;
+  placeholder?: string;
+  onChange: (fieldId: string, value: string | number | undefined) => void;
+}) => {
+  switch (field.type) {
+    case "choice":
+      return (
+        <Field label={field.label}>
+          <Options
+            options={field.options}
+            selected={typeof value === "string" ? value : null}
+            onSelect={(id) => onChange(field.id, id === value ? undefined : id)}
+          />
+        </Field>
+      );
+    case "number":
+      return (
+        <Field label={`${field.label} (${field.unit})`}>
+          <input
+            inputMode={field.integer ? "numeric" : "decimal"}
+            value={value ?? ""}
+            onChange={(e) => {
+              const n = Number(e.target.value);
+              onChange(field.id, e.target.value.trim() === "" || !Number.isFinite(n) ? undefined : n);
+            }}
+            placeholder="모름"
+            className="h-11 w-full rounded-lg border border-border bg-background px-3"
+          />
+        </Field>
+      );
+    case "text":
+      return (
+        <Field label={field.label}>
+          <input
+            value={value ?? ""}
+            onChange={(e) => onChange(field.id, e.target.value || undefined)}
+            placeholder={placeholder}
+            maxLength={field.maxLength}
+            className="h-11 w-full rounded-lg border border-border bg-background px-3"
+          />
+        </Field>
+      );
+  }
 };
 
 /** 기록을 탭하면 열리는 칩 수정 시트 (PRD R0) */
@@ -199,7 +216,7 @@ const EditBody = ({
         </button>
         <button
           type="button"
-          onClick={() => onSave(draft)}
+          onClick={() => onSave(visibleValues(draft))}
           className="h-12 flex-2 rounded-xl bg-accent font-bold text-accent-foreground"
         >
           완료
@@ -218,30 +235,28 @@ const Field = ({ label, children }: { label: string; children: ReactNode }) => {
   );
 };
 
-const Options = <T extends string>({
-  values,
-  labels,
+const Options = ({
+  options,
   selected,
   onSelect,
 }: {
-  values: readonly T[];
-  labels: Record<T, string>;
-  selected: T | null;
-  onSelect: (value: T) => void;
+  options: readonly Option[];
+  selected: string | null;
+  onSelect: (id: string) => void;
 }) => {
   return (
     <div className="flex flex-wrap gap-1.5">
-      {values.map((value) => (
+      {options.map((option) => (
         <button
-          key={value}
+          key={option.id}
           type="button"
-          aria-pressed={selected === value}
-          onClick={() => onSelect(value)}
+          aria-pressed={selected === option.id}
+          onClick={() => onSelect(option.id)}
           className={`h-9 rounded-full px-3.5 text-sm ${
-            selected === value ? "bg-accent font-bold text-accent-foreground" : "bg-surface text-foreground"
+            selected === option.id ? "bg-accent font-bold text-accent-foreground" : "bg-surface text-foreground"
           }`}
         >
-          {labels[value]}
+          {option.label}
         </button>
       ))}
     </div>

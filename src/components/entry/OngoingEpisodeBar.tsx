@@ -1,6 +1,7 @@
 import { elapsedMinutes } from "@/lib/domain/datetime";
 import type { LogEntry } from "@/lib/domain/types";
-import { KIND_STYLES, LABELS } from "@/lib/domain/values";
+import { kindLabel } from "@/lib/domain/kinds";
+import { kindStyle } from "@/lib/domain/values";
 
 /** 메인 위쪽 "진행 중" 띠. 열린 에피소드마다 한 줄, [끝] 버튼으로 닫는다 (PRD R1) */
 const OngoingEpisodeBar = ({
@@ -22,12 +23,12 @@ const OngoingEpisodeBar = ({
         >
           <span className="relative flex size-2.5">
             <span
-              className={`absolute inline-flex size-full animate-ping rounded-full opacity-60 ${KIND_STYLES[episode.kind].dot}`}
+              className={`absolute inline-flex size-full animate-ping rounded-full opacity-60 ${kindStyle(episode.kindId).dot}`}
             />
-            <span className={`relative inline-flex size-2.5 rounded-full ${KIND_STYLES[episode.kind].dot}`} />
+            <span className={`relative inline-flex size-2.5 rounded-full ${kindStyle(episode.kindId).dot}`} />
           </span>
           <p className="flex-1 text-sm">
-            <span className="font-bold">{LABELS.entryKind[episode.kind]}</span> 진행 중 ·{" "}
+            <span className="font-bold">{kindLabel(episode.kindId)}</span> 진행 중 ·{" "}
             <span className="tabular-nums">{elapsedMinutes(episode.occurredAt, nowIso)}분째</span>
           </p>
           <button

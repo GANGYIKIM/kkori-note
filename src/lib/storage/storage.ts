@@ -1,10 +1,10 @@
-import type { ConsultMessage, Dog, LogEntry, Settings } from "@/lib/domain/types";
+import type { ChatMessage, Dog, LogEntry, Settings } from "@/lib/domain/types";
 
 /** 기간 조회 옵션. from/to는 ISO 8601, 양 끝 포함 */
 interface ListEntriesOptions {
   from?: string;
   to?: string;
-  kinds?: LogEntry["kind"][];
+  kindIds?: string[];
 }
 
 /**
@@ -23,8 +23,9 @@ interface Storage {
   listEntries(dogId: string, options?: ListEntriesOptions): Promise<LogEntry[]>;
   deleteEntry(id: string): Promise<void>;
 
-  saveConsultMessage(message: ConsultMessage): Promise<void>;
-  listConsultMessages(dogId: string): Promise<ConsultMessage[]>;
+  saveChatMessage(message: ChatMessage): Promise<void>;
+  /** 작성 시각 오름차순 */
+  listChatMessages(dogId: string): Promise<ChatMessage[]>;
 }
 
 export type { ListEntriesOptions, Storage };

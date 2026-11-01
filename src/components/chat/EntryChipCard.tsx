@@ -2,34 +2,32 @@ import type { ReactNode } from "react";
 import { formatLocalTime } from "@/lib/domain/datetime";
 import { summarizeEntry } from "@/lib/domain/entry-summary";
 import type { LogEntry, UncertainField } from "@/lib/domain/types";
-import { KIND_STYLES, LABELS } from "@/lib/domain/values";
+import { fieldLabel, findKind, kindLabel, optionLabel } from "@/lib/domain/kinds";
+import { kindStyle } from "@/lib/domain/values";
 import { CheckCircleIcon, UndoIcon } from "@/components/common/Icons";
 import { Tag } from "@/components/common/Tag";
 
-const FIELD_LABELS: Record<UncertainField["field"], string> = {
-  kind: "종류",
+const COMMON_FIELD_LABELS: Record<string, string> = {
+  kindId: "종류",
   occurredAt: "시각",
-  stoolState: "상태",
-  intensity: "강도",
   durationSec: "지속시간",
-  amountG: "양",
-  chocolateType: "초콜릿 종류",
 };
 
-/** 후보 값을 화면 라벨로. 값 목록에 있는 칸은 LABELS를 쓴다 */
-const candidateLabel = (field: UncertainField["field"], value: string): string => {
-  const table: Partial<Record<UncertainField["field"], Record<string, string>>> = {
-    kind: LABELS.entryKind,
-    stoolState: LABELS.stoolState,
-    intensity: LABELS.intensity,
-    chocolateType: LABELS.chocolateType,
-  };
-  return table[field]?.[value] ?? value;
+const uncertainLabel = (entry: LogEntry, field: string): string => {
+  return COMMON_FIELD_LABELS[field] ?? fieldLabel(findKind(entry.kindId), field);
+};
+
+/** 후보 값을 화면 라벨로. 값 목록이 있는 칸은 정의의 라벨을 쓴다 */
+const candidateLabel = (entry: LogEntry, field: string, value: string): string => {
+  if (field === "kindId") return kindLabel(value);
+  return optionLabel(findKind(entry.kindId), field, value);
 };
 
 /** 아직 비어 있는 칸만 `?`로 보여준다. 사용자가 채운 칸은 일반 칩이 된다 */
-const isStillEmpty = (entry: LogEntry, field: UncertainField["field"]): boolean => {
-  return entry[field] === null;
+const isStillEmpty = (entry: LogEntry, field: string): boolean => {
+  if (field === "occurredAt" || field === "kindId") return false;
+  if (field === "durationSec") return entry.durationSec === null;
+  return entry.values[field] === undefined;
 };
 
 /** 저장된 기록의 칩 카드 (PRD R1). 칩은 즉시 저장되고, 칸을 탭해 고치거나 되돌린다 */
@@ -63,10 +61,10 @@ const EntryChipCard = ({
                 onClick={() => onEdit?.(entry)}
                 className="flex w-full flex-wrap items-center gap-1.5 text-left"
               >
-                <Tag className={KIND_STYLES[entry.kind].tag}>{LABELS.entryKind[entry.kind]}</Tag>
+                <Tag className={kindStyle(entry.kindId).tag}>{kindLabel(entry.kindId)}</Tag>
                 <Chip>
                   {formatLocalTime(entry.occurredAt, timeZone)}
-                  {entry.timeEstimated ? <span className="ml-1 text-muted">추정</span> : null}
+                  {entry.timePrecision === "estimated" ? <span className="ml-1 text-muted">추정</span> : null}
                 </Chip>
                 {summarizeEntry(entry).map((part) => (
                   <Chip key={part}>{part}</Chip>
@@ -76,7 +74,7 @@ const EntryChipCard = ({
                     key={u.field}
                     className="inline-flex h-7 items-center rounded-lg border border-dashed border-accent px-2 text-sm font-bold text-accent"
                   >
-                    ? {FIELD_LABELS[u.field]}
+                    ? {uncertainLabel(entry, u.field)}
                   </span>
                 ))}
               </button>
@@ -84,7 +82,7 @@ const EntryChipCard = ({
               {!undone &&
                 open.map((u) => (
                   <div key={u.field} className="flex flex-wrap items-center gap-1.5">
-                    <span className="text-xs text-muted">{FIELD_LABELS[u.field]}:</span>
+                    <span className="text-xs text-muted">{uncertainLabel(entry, u.field)}:</span>
                     {u.candidates.map((value) => (
                       <button
                         key={value}
@@ -92,7 +90,7 @@ const EntryChipCard = ({
                         onClick={() => onPick?.(entry.id, u.field, value)}
                         className="h-7 rounded-full bg-accent/10 px-3 text-sm font-bold text-accent"
                       >
-                        {candidateLabel(u.field, value)}
+                        {candidateLabel(entry, u.field, value)}
                       </button>
                     ))}
                     <button
@@ -137,4 +135,4 @@ const Chip = ({ children }: { children: ReactNode }) => {
   return <span className="inline-flex h-7 items-center rounded-lg bg-surface px-2 text-sm">{children}</span>;
 };
 
-export { candidateLabel, EntryChipCard };
+export { EntryChipCard };

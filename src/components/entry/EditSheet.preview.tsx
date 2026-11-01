@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { LogEntrySchema, type LogEntry } from "@/lib/domain/types";
-import { LABELS } from "@/lib/domain/values";
+import { kindLabel } from "@/lib/domain/kinds";
 import { MOCK_ENTRY_MAP as map, MOCK_TIME_ZONE as tz } from "@/lib/mock/data";
 import type { Variant } from "@/components/preview/variant";
 import { EditForm, EditSheet } from "./EditSheet";
@@ -19,11 +19,11 @@ const FormDemo = () => {
             onClick={() => setDraft(LogEntrySchema.parse(map[id]))}
             className="rounded-full bg-surface px-3 py-1 text-sm"
           >
-            {LABELS.entryKind[map[id].kind]} 예시
+            {kindLabel(map[id].kindId)} 예시
           </button>
         ))}
       </div>
-      <EditForm entry={draft} timeZone={tz} onChange={setDraft} />
+      <EditForm key={draft.id} entry={draft} timeZone={tz} onChange={setDraft} />
     </div>
   );
 };

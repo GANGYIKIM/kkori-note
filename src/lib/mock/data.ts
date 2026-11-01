@@ -12,7 +12,8 @@ import {
   type Dog,
   type LogEntry,
 } from "@/lib/domain/types";
-import { LABELS, MODES, STOOL_STATES, type Mode, type RiskGrade } from "@/lib/domain/values";
+import { findField, findKind } from "@/lib/domain/kinds";
+import { MODES, type Mode, type RiskGrade } from "@/lib/domain/values";
 
 const MOCK_TIME_ZONE = "Asia/Seoul";
 const MOCK_NOW = "2026-10-29T03:00:00.000Z";
@@ -30,7 +31,7 @@ const kst = (date: string, time: string): string => {
   return new Date(`${date}T${time}:00+09:00`).toISOString();
 };
 
-const entry = (fields: Partial<LogEntry> & Pick<LogEntry, "id" | "kind" | "occurredAt">): LogEntry => {
+const entry = (fields: Partial<LogEntry> & Pick<LogEntry, "id" | "kindId" | "occurredAt">): LogEntry => {
   return LogEntrySchema.parse({ dogId: MOCK_DOG.id, createdAt: fields.occurredAt, ...fields });
 };
 
@@ -39,29 +40,29 @@ const MOCK_ENTRIES: LogEntry[] = [
   // 10/29 오늘
   entry({
     id: "e-poop-soft",
-    kind: "poop",
+    kindId: "poop",
     occurredAt: kst("2026-10-29", "11:58"),
-    stoolState: "soft",
     rawText: "방금 배변했는데 무른 편이야",
+    values: { stoolState: "soft" },
   }),
-  entry({ id: "e-poop-unknown", kind: "poop", occurredAt: kst("2026-10-29", "11:40"), rawText: "응가 했어" }),
+  entry({ id: "e-poop-unknown", kindId: "poop", occurredAt: kst("2026-10-29", "11:40"), rawText: "응가 했어" }),
   entry({
     id: "e-meal",
-    kind: "meal",
+    kindId: "meal",
     occurredAt: kst("2026-10-29", "08:00"),
-    timeEstimated: true,
+    timePrecision: "estimated",
     rawText: "밥 먹고 산책했어",
   }),
   entry({
     id: "e-walk",
-    kind: "walk",
+    kindId: "walk",
     occurredAt: kst("2026-10-29", "11:00"),
     durationSec: 1800,
     rawText: "밥 먹고 산책했어",
   }),
   entry({
     id: "e-seizure-today",
-    kind: "seizure",
+    kindId: "seizure",
     occurredAt: kst("2026-10-29", "10:30"),
     endedAt: kst("2026-10-29", "10:32"),
     durationSec: 120,
@@ -69,79 +70,85 @@ const MOCK_ENTRIES: LogEntry[] = [
   }),
   entry({
     id: "e-diarrhea",
-    kind: "poop",
+    kindId: "poop",
     occurredAt: kst("2026-10-29", "09:00"),
-    timeEstimated: true,
-    stoolState: "diarrhea",
+    timePrecision: "estimated",
     rawText: "오늘 설사했는데 왜 그럴까?",
+    values: { stoolState: "diarrhea" },
   }),
   entry({
     id: "e-choco",
-    kind: "picked_up",
+    kindId: "picked_up",
     occurredAt: kst("2026-10-29", "11:50"),
-    riskFood: "chocolate",
     rawText: "초코가 초코 먹었어",
+    values: { riskFood: "chocolate" },
   }),
   entry({
     id: "e-thunder",
-    kind: "thunder_fear",
+    kindId: "thunder_fear",
     occurredAt: kst("2026-10-29", "11:48"),
-    intensity: "medium",
     rawText: "천둥 쳐서 덜덜 떨어",
+    values: { intensity: "medium" },
   }),
   // 10/28 어제
-  entry({ id: "e-28-meal", kind: "meal", occurredAt: kst("2026-10-28", "08:00") }),
-  entry({ id: "e-28-poop", kind: "poop", occurredAt: kst("2026-10-28", "08:20"), stoolState: "normal" }),
-  entry({ id: "e-28-snack", kind: "snack", occurredAt: kst("2026-10-28", "15:00"), detail: "닭가슴살 육포 (새 간식)" }),
+  entry({ id: "e-28-meal", kindId: "meal", occurredAt: kst("2026-10-28", "08:00") }),
+  entry({ id: "e-28-poop", kindId: "poop", occurredAt: kst("2026-10-28", "08:20"), values: { stoolState: "normal" } }),
+  entry({
+    id: "e-28-snack",
+    kindId: "snack",
+    occurredAt: kst("2026-10-28", "15:00"),
+    values: { detail: "닭가슴살 육포 (새 간식)" },
+  }),
   entry({
     id: "e-28-walk",
-    kind: "walk",
+    kindId: "walk",
     occurredAt: kst("2026-10-28", "18:30"),
     durationSec: 2400,
-    detail: "다른 강아지랑 잘 놀았어",
+    values: { detail: "다른 강아지랑 잘 놀았어" },
   }),
-  entry({ id: "e-28-picked", kind: "picked_up", occurredAt: kst("2026-10-28", "18:50"), detail: "휴지 조각" }),
-  entry({ id: "e-28-poop2", kind: "poop", occurredAt: kst("2026-10-28", "20:10"), stoolState: "soft" }),
-  entry({ id: "e-28-poop3", kind: "poop", occurredAt: kst("2026-10-28", "23:40"), stoolState: "soft" }),
+  entry({
+    id: "e-28-picked",
+    kindId: "picked_up",
+    occurredAt: kst("2026-10-28", "18:50"),
+    values: { detail: "휴지 조각" },
+  }),
+  entry({ id: "e-28-poop2", kindId: "poop", occurredAt: kst("2026-10-28", "20:10"), values: { stoolState: "soft" } }),
+  entry({ id: "e-28-poop3", kindId: "poop", occurredAt: kst("2026-10-28", "23:40"), values: { stoolState: "soft" } }),
   // 10/27
-  entry({ id: "e-27-poop", kind: "poop", occurredAt: kst("2026-10-27", "08:10"), stoolState: "normal" }),
+  entry({ id: "e-27-poop", kindId: "poop", occurredAt: kst("2026-10-27", "08:10"), values: { stoolState: "normal" } }),
   entry({
     id: "e-27-limp",
-    kind: "limp",
+    kindId: "limp",
     occurredAt: kst("2026-10-27", "17:00"),
     endedAt: kst("2026-10-27", "17:10"),
     durationSec: 600,
-    intensity: "low",
-    detail: "왼쪽 뒷다리",
+    values: { intensity: "low", detail: "왼쪽 뒷다리" },
   }),
-  entry({ id: "e-27-note", kind: "note", occurredAt: kst("2026-10-27", "21:00"), detail: "미용 다녀옴" }),
+  entry({ id: "e-27-note", kindId: "note", occurredAt: kst("2026-10-27", "21:00"), values: { detail: "미용 다녀옴" } }),
   // 10/25
-  entry({ id: "e-25-poop", kind: "poop", occurredAt: kst("2026-10-25", "09:00"), stoolState: "normal" }),
+  entry({ id: "e-25-poop", kindId: "poop", occurredAt: kst("2026-10-25", "09:00"), values: { stoolState: "normal" } }),
   entry({
     id: "e-25-seizure",
-    kind: "seizure",
+    kindId: "seizure",
     occurredAt: kst("2026-10-25", "22:15"),
     endedAt: kst("2026-10-25", "22:16"),
     durationSec: 90,
-    intensity: "high",
+    values: { intensity: "high" },
   }),
   // 10/23
-  entry({ id: "e-23-poop", kind: "poop", occurredAt: kst("2026-10-23", "08:30"), stoolState: "hard" }),
+  entry({ id: "e-23-poop", kindId: "poop", occurredAt: kst("2026-10-23", "08:30"), values: { stoolState: "hard" } }),
   // 10/20 (최근 7일 밖, 범위 확장용)
-  entry({ id: "e-20-poop", kind: "poop", occurredAt: kst("2026-10-20", "08:30"), stoolState: "normal" }),
+  entry({ id: "e-20-poop", kindId: "poop", occurredAt: kst("2026-10-20", "08:30"), values: { stoolState: "normal" } }),
 ];
 
 /** 위험 기록에 양·종류를 보충한 뒤의 상태 (케이스 7-2) */
-const CHOCO_UPDATED = {
-  ...MOCK_ENTRIES.find((e) => e.id === "e-choco")!,
-  chocolateType: "milk",
-  amountG: 20,
-} satisfies LogEntry;
+const MOCK_CHOCO = MOCK_ENTRIES.find((e) => e.id === "e-choco")!;
+const CHOCO_UPDATED: LogEntry = { ...MOCK_CHOCO, values: { ...MOCK_CHOCO.values, chocolateType: "milk", amountG: 20 } };
 
 /** 되돌린 기록 (케이스 9). 저장소에는 없고 채팅 카드에만 남는다 */
 const UNDONE_WALK = entry({
   id: "e-undone-walk",
-  kind: "walk",
+  kindId: "walk",
   occurredAt: kst("2026-10-29", "11:59"),
   rawText: "산책 다녀왔어",
 });
@@ -152,11 +159,14 @@ const toEntryMap = (entries: readonly LogEntry[]): Record<string, LogEntry> => {
 
 /** 최근 7일 배변 요약. 숫자는 코드가 계산한다 (CLAUDE.md 규칙 3) */
 const poopSummary = (fromDate: string): { ids: string[]; summary: string } => {
-  const poops = MOCK_ENTRIES.filter((e) => e.kind === "poop" && e.occurredAt >= kst(fromDate, "00:00"));
-  const parts = STOOL_STATES.map((s) => [s, poops.filter((p) => p.stoolState === s).length] as const)
+  const poops = MOCK_ENTRIES.filter((e) => e.kindId === "poop" && e.occurredAt >= kst(fromDate, "00:00"));
+  const stoolState = findField(findKind("poop"), "stoolState");
+  const options = stoolState?.type === "choice" ? stoolState.options : [];
+  const parts = options
+    .map((o) => [o.label, poops.filter((p) => p.values.stoolState === o.id).length] as const)
     .filter(([, n]) => n > 0)
-    .map(([s, n]) => `${LABELS.stoolState[s]} ${n}`);
-  const unknown = poops.filter((p) => p.stoolState === null).length;
+    .map(([label, n]) => `${label} ${n}`);
+  const unknown = poops.filter((p) => p.values.stoolState === undefined).length;
   if (unknown > 0) parts.push(`상태 모름 ${unknown}`);
   return { ids: poops.map((p) => p.id), summary: `배변 ${poops.length}건 · ${parts.join(", ")}` };
 };
@@ -369,7 +379,10 @@ const CHAT_CASES: ChatCase[] = [
     id: "risk-caution",
     title: "7-3. 경계 등급 예시 (중립 모드)",
     prd: "R6 🟡는 모든 모드에 전화 상담 포함",
-    entries: { ...MOCK_ENTRY_MAP, "e-choco": { ...CHOCO_UPDATED, chocolateType: "dark", amountG: 15 } },
+    entries: {
+      ...MOCK_ENTRY_MAP,
+      "e-choco": { ...CHOCO_UPDATED, values: { ...CHOCO_UPDATED.values, chocolateType: "dark", amountG: 15 } },
+    },
     messages: [
       user("다크초콜릿 15g쯤 먹었어"),
       bot(

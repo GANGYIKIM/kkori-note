@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
  * 쓸 때: 시각으로 시작하는 목록 한 줄 (기록 목록, 근거 카드).
  * 쓰지 않을 때: 시각 없는 목록, 칩 여러 개를 나열하는 카드 → 그 화면에서 직접 구성.
  * @example
- * <ListRow time="08:30" tag={<Tag className={KIND_STYLES.meal.tag}>식사</Tag>} trailing="샘플" onClick={open}>
+ * <ListRow time="08:30" tag={<Tag className={kindStyle("meal").tag}>식사</Tag>} trailing="샘플" onClick={open}>
  *   사료 반 컵
  * </ListRow>
  */

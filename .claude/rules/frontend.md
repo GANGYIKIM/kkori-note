@@ -8,7 +8,7 @@ paths:
 ## 색
 
 - 색은 `src/app/globals.css`의 의미 단위 토큰만 쓴다: `background`, `foreground`, `surface`, `muted`, `border`, `accent`, `accent-foreground` (예: `bg-surface`, `text-muted`, `border-border`, `bg-accent`).
-- 기록 종류별 색은 `src/lib/domain/values.ts`의 `KIND_STYLES`에서 가져온다. 컴포넌트에 `bg-kind-*`를 직접 적지 않는다.
+- 기록 종류별 색은 `src/lib/domain/values.ts`의 `kindStyle()`에서 가져온다. 컴포넌트에 `bg-kind-*`를 직접 적지 않는다.
 - 임의의 색상값(`#e0803a`, `bg-[#...]`, `orange-500` 같은 기본 팔레트)을 새로 쓰지 않는다. 다크 모드는 토큰이 처리한다.
 - 새 토큰이 필요하면 먼저 제안하고, 추가할 때는 `:root`, 다크 모드, `@theme inline` 세 곳을 함께 고친다.
 
@@ -50,9 +50,9 @@ paths:
 ## `common/` 컴포넌트
 
 - 로직을 모른다. `children`, `className`, 슬롯(`ReactNode` prop)만 받는다.
-- 도메인 타입(`LogEntry`, `EntryKind` 등)과 `src/lib/domain`을 import하지 않는다. 도메인 값을 모양으로 바꾸는 일은 쓰는 쪽이 한다.
-  - ✗ `<KindTag kind={entry.kind} />`
-  - ✓ `<Tag className={KIND_STYLES[entry.kind].tag}>{LABELS.entryKind[entry.kind]}</Tag>`
+- 도메인 타입(`LogEntry`, `KindDef` 등)과 `src/lib/domain`을 import하지 않는다. 도메인 값을 모양으로 바꾸는 일은 쓰는 쪽이 한다.
+  - ✗ `<KindTag kindId={entry.kindId} />`
+  - ✓ `<Tag className={kindStyle(entry.kindId).tag}>{kindLabel(entry.kindId)}</Tag>`
 - 상단에 의도를 아래 형식으로 적는다. "쓰지 않을 때"에는 대신 쓸 것을 함께 적는다. `@example`은 props만 봐서는 쓰는 법이 분명하지 않을 때만 붙인다.
   ```tsx
   /**

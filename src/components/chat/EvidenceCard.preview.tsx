@@ -2,7 +2,7 @@ import { MOCK_ENTRIES, MOCK_ENTRY_MAP as map, MOCK_TIME_ZONE as tz } from "@/lib
 import type { Variant } from "@/components/preview/variant";
 import { EvidenceCard } from "./EvidenceCard";
 
-const lastWeekPoops = MOCK_ENTRIES.filter((e) => e.kind === "poop" && e.occurredAt >= "2026-10-22T15:00:00.000Z");
+const lastWeekPoops = MOCK_ENTRIES.filter((e) => e.kindId === "poop" && e.occurredAt >= "2026-10-22T15:00:00.000Z");
 
 const variants: Variant[] = [
   {

@@ -1,14 +1,5 @@
 import { z } from "zod";
-import {
-  CHOCOLATE_TYPES,
-  ENTRY_KINDS,
-  INTENSITIES,
-  MODES,
-  RISK_FOODS,
-  RISK_GRADES,
-  STOOL_STATES,
-  WEATHERS,
-} from "./values";
+import { MODES, RISK_GRADES, TIME_PRECISIONS, WEATHERS } from "./values";
 
 /** 강아지 프로필. 한 마리 고정이지만 dogId 기준으로 설계해 추후 초대 기반 접근을 붙일 수 있게 한다. */
 const DogSchema = z.object({
@@ -22,30 +13,24 @@ const DogSchema = z.object({
 });
 type Dog = z.infer<typeof DogSchema>;
 
-/** 기록(LogEntry). 순간 기록과 에피소드 기록을 한 구조로 다룬다. */
+/**
+ * 기록(LogEntry). 순간 기록과 에피소드 기록을 한 구조로 다룬다.
+ * 종류마다 다른 칸은 values에 항목 id → 값으로 담고, 정의(kinds.ts)와 맞춰 보지 않는다 (ADR-0012).
+ */
 const LogEntrySchema = z.object({
   id: z.string().min(1),
   dogId: z.string().min(1),
-  kind: z.enum(ENTRY_KINDS),
-  /** 일어난(시작한) 시각. ISO 8601 */
+  kindId: z.string().min(1),
+  /** 일어난(시작한) 시각. ISO 8601. timePrecision이 day면 기기 현지 시간대의 그날 0시 */
   occurredAt: z.iso.datetime({ offset: true }),
-  /** "어제 저녁쯤"처럼 시각을 추정했으면 true. 칩에 "추정"으로 표시한다 (PRD R2) */
-  timeEstimated: z.boolean().default(false),
+  /** estimated는 "어제 저녁쯤"처럼 추정한 시각. 칩에 "추정"으로 표시한다 (PRD R2) */
+  timePrecision: z.enum(TIME_PRECISIONS).default("exact"),
   /** 에피소드가 끝난 시각. 비어 있으면 진행 중(열림) */
   endedAt: z.iso.datetime({ offset: true }).nullable().default(null),
   /** 지속시간(초). 사용자가 "2분쯤"이라고만 말한 경우를 위해 endedAt과 별도 */
   durationSec: z.number().int().min(0).nullable().default(null),
-  stoolState: z.enum(STOOL_STATES).nullable().default(null),
-  intensity: z.enum(INTENSITIES).nullable().default(null),
-  /** 횟수 등 숫자 값 (예: 배변 2회) */
-  count: z.number().int().min(1).nullable().default(null),
-  /** 주워 먹은 것, 간식 이름 등 자유 텍스트 */
-  detail: z.string().max(200).nullable().default(null),
-  /** 위험 음식이면 그 종류. assess()의 입력이 된다 (PRD R6) */
-  riskFood: z.enum(RISK_FOODS).nullable().default(null),
-  chocolateType: z.enum(CHOCOLATE_TYPES).nullable().default(null),
-  /** 먹은 양(g). 모르면 null */
-  amountG: z.number().min(0).max(5000).nullable().default(null),
+  /** 항목 id → 값(option id, 숫자, 텍스트). 빈 칸은 키를 두지 않는다 */
+  values: z.record(z.string(), z.union([z.string(), z.number()])).default({}),
   /** 날씨. P1에서는 비어 있어도 모든 화면과 집계가 동작해야 한다. */
   weather: z.enum(WEATHERS).nullable().default(null),
   /** 사용자가 입력한 원문. 정규화 기준 개선 시 재분류에 쓴다. */
@@ -61,7 +46,8 @@ type LogEntry = z.infer<typeof LogEntrySchema>;
 /** 칩에서 확신이 낮은 칸. `?` 표시와 후보 칩으로 보여준다 (PRD R1, R8) */
 const UncertainFieldSchema = z.object({
   entryId: z.string().min(1),
-  field: z.enum(["kind", "occurredAt", "stoolState", "intensity", "durationSec", "amountG", "chocolateType"]),
+  /** 공통 칸("kindId", "occurredAt", "durationSec") 또는 항목 id */
+  field: z.string().min(1),
   /** 후보 값. 값 목록의 값을 그대로 담는다 */
   candidates: z.array(z.string()).default([]),
 });
@@ -116,23 +102,5 @@ const SettingsSchema = z.object({
 });
 type Settings = z.infer<typeof SettingsSchema>;
 
-/** 상담 메시지 */
-const ConsultMessageSchema = z.object({
-  id: z.string().min(1),
-  dogId: z.string().min(1),
-  role: z.enum(["user", "assistant"]),
-  content: z.string(),
-  createdAt: z.iso.datetime({ offset: true }),
-});
-type ConsultMessage = z.infer<typeof ConsultMessageSchema>;
-
-export {
-  DogSchema,
-  LogEntrySchema,
-  UncertainFieldSchema,
-  ChatBlockSchema,
-  ChatMessageSchema,
-  SettingsSchema,
-  ConsultMessageSchema,
-};
-export type { Dog, LogEntry, UncertainField, ChatBlock, ChatBlockInput, ChatMessage, Settings, ConsultMessage };
+export { DogSchema, LogEntrySchema, UncertainFieldSchema, ChatBlockSchema, ChatMessageSchema, SettingsSchema };
+export type { Dog, LogEntry, UncertainField, ChatBlock, ChatBlockInput, ChatMessage, Settings };

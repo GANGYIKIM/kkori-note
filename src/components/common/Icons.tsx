@@ -6,7 +6,7 @@ type IconProps = SVGProps<SVGSVGElement>;
  * 앱 아이콘 모음. 기본 20px이고 색은 글자색을 따른다.
  * 새 아이콘은 Icon으로 감싸 여기에 더한다. 24×24 기준 선 아이콘(채우기 없음)으로 그리고, 이름은 `XxxIcon`으로 짓는다.
  * 쓸 때: 버튼의 동작이나 안내의 상태를 글자 대신, 또는 글자와 함께 그림으로 나타낼 때. 있는 아이콘은 맨 아래 export에서 본다.
- * 쓰지 않을 때: 기록 종류 구분 → Tag나 KIND_STYLES.dot 점.
+ * 쓰지 않을 때: 기록 종류 구분 → Tag나 kindStyle().dot 점.
  */
 
 const Icon = ({ children, ...props }: IconProps) => {
