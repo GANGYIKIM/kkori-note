@@ -31,3 +31,5 @@
 | [0009](0009-component-folders.md) | 컴포넌트는 `layout`(뼈대) · `common`(작은·공용, 로직 모름) · 도메인 폴더(화면 전용 큰 단위)로. 폴더 목록은 테스트로 강제 | Accepted | 없음 |
 | [0010](0010-preview-catalog.md) | 미리보기는 Storybook 없이 직접 만든다. 컴포넌트 탭과 PRD 장면 탭으로 나누고, 변형은 컴포넌트 옆 `X.preview.tsx`에 | Accepted | 없음 |
 | [0011](0011-r-scoped-prd-and-requirement-ids.md) | PRD는 R마다 파일 하나. 하위 요구사항 `R<n>-k`·수락 기준 `R<n>-k.m` 번호, R 문서의 요구사항별 개발 표, 검사 테스트로 빈 곳을 막는다 | Accepted | 없음 |
+| [0012](0012-kind-definitions-and-entry-shape.md) | 기록은 공통 칸 + `kindId` + `values`, 종류 정의는 코드에. 시각 정확도는 `timePrecision`(정확·추정·하루 전체) | Accepted | R1, R11 |
+| [0013](0013-chat-message-block-storage.md) | 채팅 메시지는 블록 단위 `ChatMessage`로 저장하고 `ConsultMessage`는 없앤다 | Accepted | R1 |
