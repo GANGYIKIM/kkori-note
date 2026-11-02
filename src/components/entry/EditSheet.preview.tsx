@@ -28,14 +28,14 @@ const FormDemo = () => {
   );
 };
 
-const SheetDemo = () => {
+const SheetDemo = ({ entryId }: { entryId: string }) => {
   const [entry, setEntry] = useState<LogEntry | null>(null);
   const close = () => setEntry(null);
   return (
     <>
       <button
         type="button"
-        onClick={() => setEntry(map["e-poop-soft"])}
+        onClick={() => setEntry(map[entryId])}
         className="h-10 rounded-xl bg-surface px-4 text-sm font-bold"
       >
         시트 열기
@@ -47,7 +47,8 @@ const SheetDemo = () => {
 
 const variants: Variant[] = [
   { name: "EditForm · 종류에 따라 칸이 바뀜", render: () => <FormDemo /> },
-  { name: "EditSheet · 시트 + 삭제 · 완료", render: () => <SheetDemo /> },
+  { name: "EditSheet · 시트 + 삭제 · 완료", render: () => <SheetDemo entryId="e-poop-soft" /> },
+  { name: "EditSheet · 칸이 많아 시트 안에서 스크롤", render: () => <SheetDemo entryId="e-choco" /> },
 ];
 
 export { variants };

@@ -71,8 +71,8 @@ const BottomSheet = ({
           </button>
         </header>
         <ScrollArea
-          className="flex-1"
-          viewportClassName={`py-4 ${full ? "pr-[max(0px,calc(4%-0.875rem))] pl-[4%]" : "pr-0.5 pl-4"} ${
+          className="flex flex-1 flex-col"
+          viewportClassName={`min-h-0 flex-1 py-4 ${full ? "pr-[max(0px,calc(4%-0.875rem))] pl-[4%]" : "pr-0.5 pl-4"} ${
             stickToBottom ? "flex flex-col-reverse" : ""
           }`}
         >
