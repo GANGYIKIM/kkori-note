@@ -8,7 +8,7 @@ const variants: Variant[] = [
     render: () => (
       <EmptyState
         title="아직 기록이 없어요"
-        description={'아래 입력창에 이렇게 적어 보세요. "방금 배변했는데 무른 편이야"'}
+        description={'입력창에 이렇게 적어 보세요. "방금 배변했는데 무른 편이야"'}
         action={
           <span className="inline-block h-10 rounded-xl bg-accent/10 px-4 text-sm/10 font-bold text-accent">
             샘플 기록 불러오기

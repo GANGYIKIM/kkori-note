@@ -8,6 +8,10 @@ const variants: Variant[] = [
     render: () => <FirstRecordGuide nowIso={MOCK_NOW} timeZone={MOCK_TIME_ZONE} onLoadSample={() => {}} />,
   },
   { name: "샘플 버튼 없음", render: () => <FirstRecordGuide nowIso={MOCK_NOW} timeZone={MOCK_TIME_ZONE} /> },
+  {
+    name: "이름을 정한 뒤",
+    render: () => <FirstRecordGuide nowIso={MOCK_NOW} timeZone={MOCK_TIME_ZONE} dogName="곰순이" />,
+  },
 ];
 
 export { variants };

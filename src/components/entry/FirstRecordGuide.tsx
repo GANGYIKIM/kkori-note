@@ -20,7 +20,7 @@ const previewEntries = (nowIso: string, timeZone: string): LogEntry[] => {
   };
   return [
     { ...base, id: "preview-meal", kindId: "meal", occurredAt: at(8), values: {}, createdAt: at(8) },
-    { ...base, id: "preview-walk", kindId: "walk", occurredAt: at(8.5), values: {}, createdAt: at(8.5) },
+    { ...base, id: "preview-walk", kindId: "walk", occurredAt: at(8), values: {}, createdAt: at(8) },
     {
       ...base,
       id: "preview-poop",
@@ -32,14 +32,19 @@ const previewEntries = (nowIso: string, timeZone: string): LogEntry[] => {
   ];
 };
 
-/** 기록이 하나도 없을 때의 메인 목록. 첫 기록 예시 문장과 쌓였을 때의 흐린 미리보기, 샘플 불러오기 (PRD R0-6, R10) */
+/**
+ * 기록이 하나도 없을 때의 메인 목록. 예시 문장과 쌓였을 때의 흐린 미리보기, 샘플 불러오기 (PRD R0-6, R10).
+ * 이름을 정하기 전에는 인사와 이름을 알려 주는 문장, 정한 뒤에는 첫 기록 문장을 예시로 보여준다 (demo 브랜치)
+ */
 const FirstRecordGuide = ({
   nowIso,
   timeZone,
+  dogName = null,
   onLoadSample,
 }: {
   nowIso: string;
   timeZone: string;
+  dogName?: string | null;
   onLoadSample?: () => void;
 }) => {
   return (
@@ -47,9 +52,11 @@ const FirstRecordGuide = ({
       <div className="space-y-3 text-center">
         <p className="text-xl font-bold">아직 기록이 없어요</p>
         <p className="text-[15px]/relaxed text-muted">
-          아래 입력창에 이렇게 적어 보세요.
+          {dogName ? "입력창에 이렇게 적어 보세요." : "처음이라면 인사와 함께 강아지 이름을 알려 주세요."}
           <br />
-          <span className="font-bold text-foreground">&quot;방금 배변했는데 무른 편이야&quot;</span>
+          <span className="font-bold text-foreground">
+            &quot;{dogName ? "아침 8시에 밥 먹고 산책 다녀왔어" : "안녕, 우리집 강아지 이름은 곰순이야"}&quot;
+          </span>
         </p>
         {onLoadSample ? (
           <button
