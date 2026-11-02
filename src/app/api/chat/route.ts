@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
 import { z } from "zod";
-import { ChatTurnSchema } from "@/lib/domain/types";
-import { buildChatGuide } from "@/lib/server/chat-guide";
+import { callChatLlm } from "@/lib/server/chat-llm";
 import { serverConfig } from "@/lib/server/config";
 import { guardLlmRequest } from "@/lib/server/guard";
 
@@ -35,21 +33,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    const client = new OpenAI({ apiKey });
-    const completion = await client.chat.completions.create({
-      model,
-      reasoning_effort: serverConfig.reasoningEffort.parse,
-      max_completion_tokens: 800,
-      response_format: { type: "json_object" },
-      messages: [
-        { role: "system", content: buildChatGuide(parsed.data) },
-        { role: "user", content: text },
-      ],
-    });
-    const content = completion.choices[0]?.message?.content ?? "";
-    const turn = ChatTurnSchema.safeParse(JSON.parse(content));
-    if (!turn.success) throw new Error("LLM 출력 모양이 맞지 않음");
-    return NextResponse.json(turn.data);
+    const { turn } = await callChatLlm({ ...parsed.data, text }, { apiKey, model });
+    return NextResponse.json(turn);
   } catch (error) {
     console.error("[chat] 처리 실패", error instanceof Error ? error.message : error);
     return NextResponse.json(
