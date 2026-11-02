@@ -13,6 +13,7 @@ const SheetDemo = ({ full }: { full: boolean }) => {
       <BottomSheet
         open={open}
         title={full ? "초코와 대화" : "기록 고치기"}
+        showTitle={!full}
         onClose={() => setOpen(false)}
         full={full}
         footer={full ? <MessageComposer onSend={() => {}} /> : undefined}

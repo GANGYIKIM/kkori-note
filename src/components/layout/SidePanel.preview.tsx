@@ -4,7 +4,7 @@ import { SidePanel } from "./SidePanel";
 
 const variants: Variant[] = [
   {
-    name: "제목 · 본문 · 하단 입력창",
+    name: "본문 · 하단 입력창",
     note: "실제로는 넓은 화면에서 화면 높이만큼 늘어나요. 여기서는 높이를 줄였어요.",
     render: () => (
       <div className="h-72">

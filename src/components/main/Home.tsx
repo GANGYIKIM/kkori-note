@@ -299,6 +299,7 @@ const Home = () => {
       <BottomSheet
         open={chatOpen}
         title={chatTitle}
+        showTitle={false}
         onClose={() => setChatOpen(false)}
         full
         stickToBottom

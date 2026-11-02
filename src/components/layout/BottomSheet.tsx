@@ -7,11 +7,12 @@ import { ScrollArea } from "@/components/common/ScrollArea";
 /**
  * 아래에서 올라오는 시트. full이면 화면 전체(채팅)를 덮고 안쪽 내용은 화면 폭의 92%, 아니면 내용 높이만큼·최대 448px(칩 수정).
  * stickToBottom이면 본문이 아래부터 쌓여 열 때 맨 아래가 보이고, 맨 아래에 있을 때 내용이 늘면 따라간다(채팅의 최근 대화). 열려 있는 동안 뒤 문서는 스크롤되지 않는다.
- * className은 바깥 틀에 붙는다(예: 넓은 화면에서 숨기기).
+ * showTitle이 false면 제목은 화면 낭독기에만 알리고 닫기 버튼만 보인다(채팅). className은 바깥 틀에 붙는다(예: 넓은 화면에서 숨기기).
  */
 const BottomSheet = ({
   open,
   title,
+  showTitle = true,
   onClose,
   full = false,
   stickToBottom = false,
@@ -21,6 +22,7 @@ const BottomSheet = ({
 }: {
   open: boolean;
   title: string;
+  showTitle?: boolean;
   onClose: () => void;
   full?: boolean;
   stickToBottom?: boolean;
@@ -60,8 +62,10 @@ const BottomSheet = ({
           full ? "h-dvh" : "max-h-[85dvh] max-w-md rounded-t-[20px]"
         }`}
       >
-        <header className={`flex h-14 shrink-0 items-center justify-between ${full ? "px-[4%]" : "px-4"}`}>
-          <h2 className="font-bold">{title}</h2>
+        <header
+          className={`flex h-14 shrink-0 items-center ${showTitle ? "justify-between" : "justify-end"} ${full ? "px-[4%]" : "px-4"}`}
+        >
+          <h2 className={showTitle ? "font-bold" : "sr-only"}>{title}</h2>
           <button type="button" onClick={onClose} aria-label="닫기" className="-mr-2 p-2 text-muted">
             <CloseIcon />
           </button>
