@@ -8,13 +8,13 @@ import { ScrollArea } from "@/components/common/ScrollArea";
 const SidePanel = ({ title, children, footer }: { title: string; children: ReactNode; footer: ReactNode }) => {
   return (
     <section aria-label={title} className="flex h-full min-h-0 flex-col">
-      <header className="flex h-14 shrink-0 items-center border-b border-border px-4">
+      <header className="flex h-14 shrink-0 items-center px-4">
         <h2 className="font-bold">{title}</h2>
       </header>
       <ScrollArea className="flex-1" viewportClassName="flex flex-col-reverse py-4 pl-4 pr-0.5">
         <div>{children}</div>
       </ScrollArea>
-      <div className="shrink-0 border-t border-border px-4 py-3">{footer}</div>
+      <div className="shrink-0 px-4 py-3">{footer}</div>
     </section>
   );
 };

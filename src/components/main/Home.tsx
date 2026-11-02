@@ -119,8 +119,8 @@ const Home = () => {
   return (
     <div className="h-dvh lg:mx-auto lg:grid lg:w-[92%] lg:max-w-[1200px] lg:grid-cols-[minmax(0,1fr)_min(40%,420px)]">
       <div className="flex h-full min-h-0 flex-col">
-        <div className="shrink-0 bg-background">
-          <div className="mx-auto w-[92%] lg:w-full">
+        <div className="shrink-0 bg-background lg:h-14">
+          <div className="mx-auto w-[92%] lg:w-full lg:pr-4 lg:pl-3">
             <AppHeader dogName={MOCK_DOG.name} />
           </div>
         </div>

@@ -60,9 +60,7 @@ const BottomSheet = ({
           full ? "h-dvh" : "max-h-[85dvh] max-w-md rounded-t-[20px]"
         }`}
       >
-        <header
-          className={`flex h-14 shrink-0 items-center justify-between border-b border-border ${full ? "px-[4%]" : "px-4"}`}
-        >
+        <header className={`flex h-14 shrink-0 items-center justify-between ${full ? "px-[4%]" : "px-4"}`}>
           <h2 className="font-bold">{title}</h2>
           <button type="button" onClick={onClose} aria-label="닫기" className="-mr-2 p-2 text-muted">
             <CloseIcon />
@@ -76,9 +74,7 @@ const BottomSheet = ({
         >
           <div>{children}</div>
         </ScrollArea>
-        {footer ? (
-          <div className={`shrink-0 border-t border-border py-3 ${full ? "px-[4%]" : "px-4"}`}>{footer}</div>
-        ) : null}
+        {footer ? <div className={`shrink-0 py-3 ${full ? "px-[4%]" : "px-4"}`}>{footer}</div> : null}
       </div>
     </div>
   );

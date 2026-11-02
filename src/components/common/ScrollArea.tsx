@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useEffectEvent, useRef, useState, type ReactNode } from "react";
-import { scrollDeltaForDrag, thumbMetrics } from "./scroll-thumb";
+import { scrollDeltaForDrag, scrollEdges, thumbMetrics } from "./scroll-thumb";
 
 const HIDE_DELAY_MS = 1000;
 
 /**
- * 기본 스크롤바 대신 얇은 막대를 보여주는 세로 스크롤 영역. 오른쪽 14px(막대 최대 폭 10px + 4px)는 스크롤되지 않는 막대 자리라 내용이 막대 밑에 깔리지 않고, 그 위에서 휠을 굴려도 스크롤되지 않는다. 스크롤하거나 마우스를 올리면 막대가 보이고, 막대를 눌러 끌어야 스크롤된다.
+ * 기본 스크롤바 대신 얇은 막대를 보여주는 세로 스크롤 영역. 위·아래에 가려진 내용이 있으면 그쪽 경계에 페이드를 깔아, 헤더·하단에 선을 두지 않는다. 오른쪽 14px(막대 최대 폭 10px + 4px)는 스크롤되지 않는 막대 자리라 내용이 막대 밑에 깔리지 않고, 그 위에서 휠을 굴려도 스크롤되지 않는다. 스크롤하거나 마우스를 올리면 막대가 보이고, 막대를 눌러 끌어야 스크롤된다.
  * viewportClassName에 flex-col-reverse를 주면 아래부터 쌓이는 영역으로 알아서 계산한다.
  * 쓸 때: 화면 안의 세로 스크롤 영역 (메인 본문, 설정 본문, 채팅 칸, 시트 본문). PRD R0-7, ADR-0015.
  * 쓰지 않을 때: 가로 스크롤 → 직접 overflow-x-auto.
@@ -24,6 +24,8 @@ const ScrollArea = ({
 }) => {
   const viewport = useRef<HTMLDivElement>(null);
   const thumb = useRef<HTMLDivElement>(null);
+  const topFade = useRef<HTMLDivElement>(null);
+  const bottomFade = useRef<HTMLDivElement>(null);
   const reversed = useRef(false);
   const frame = useRef(0);
   const hideTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -38,12 +40,16 @@ const ScrollArea = ({
       const el = viewport.current;
       const bar = thumb.current;
       if (!el || !bar) return;
-      const metrics = thumbMetrics({
+      const box = {
         scrollTop: el.scrollTop,
         scrollHeight: el.scrollHeight,
         clientHeight: el.clientHeight,
         reversed: reversed.current,
-      });
+      };
+      const metrics = thumbMetrics(box);
+      const edges = scrollEdges(box);
+      if (topFade.current) topFade.current.style.opacity = edges.top ? "1" : "0";
+      if (bottomFade.current) bottomFade.current.style.opacity = edges.bottom ? "1" : "0";
       bar.style.display = metrics ? "" : "none";
       if (metrics) {
         bar.style.height = `${metrics.size}px`;
@@ -110,6 +116,16 @@ const ScrollArea = ({
       <div ref={viewport} onScroll={onScroll} className={`mr-3.5 h-full overflow-y-auto ${viewportClassName}`}>
         {children}
       </div>
+      <div
+        ref={topFade}
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 right-3.5 h-6 bg-linear-to-b from-background to-background/0 opacity-0 transition-opacity duration-200"
+      />
+      <div
+        ref={bottomFade}
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 right-3.5 bottom-0 h-6 bg-linear-to-t from-background to-background/0 opacity-0 transition-opacity duration-200"
+      />
       <div
         ref={thumb}
         aria-hidden

@@ -1,4 +1,4 @@
-/** 오버레이 스크롤바 막대의 크기·위치 계산 (ADR-0015) */
+/** 오버레이 스크롤바 막대의 크기·위치와 경계 페이드 계산 (ADR-0015) */
 
 const MIN_THUMB = 24;
 
@@ -26,6 +26,19 @@ const thumbMetrics = ({
   return { size, offset: progress * (clientHeight - size) };
 };
 
+/** 위·아래에 가려진 내용이 있는지. 경계 페이드를 보일지 정한다 */
+const scrollEdges = ({
+  scrollTop,
+  scrollHeight,
+  clientHeight,
+  reversed,
+}: ScrollBox & { reversed: boolean }): { top: boolean; bottom: boolean } => {
+  const range = scrollHeight - clientHeight;
+  if (range <= 1) return { top: false, bottom: false };
+  const fromTop = reversed ? scrollTop + range : scrollTop;
+  return { top: fromTop > 1, bottom: fromTop < range - 1 };
+};
+
 /** 막대를 dragPx만큼 끌었을 때 바꿀 scrollTop 양 */
 const scrollDeltaForDrag = (
   dragPx: number,
@@ -35,4 +48,4 @@ const scrollDeltaForDrag = (
   return track <= 0 ? 0 : (dragPx * (scrollHeight - clientHeight)) / track;
 };
 
-export { thumbMetrics, scrollDeltaForDrag };
+export { thumbMetrics, scrollEdges, scrollDeltaForDrag };
