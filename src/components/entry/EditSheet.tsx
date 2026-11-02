@@ -169,7 +169,7 @@ const ValueField = ({
   }
 };
 
-/** 기록을 탭하면 열리는 칩 수정 시트 (PRD R0) */
+/** 기록을 탭하면 열리는 칩 수정 시트. 삭제·완료 버튼은 시트 하단에 고정한다 (PRD R0) */
 const EditSheet = ({
   entry,
   timeZone,
@@ -183,46 +183,52 @@ const EditSheet = ({
   onSave: (entry: LogEntry) => void;
   onDelete: (id: string) => void;
 }) => {
-  return (
-    <BottomSheet open={entry !== null} title="기록 고치기" onClose={onClose}>
-      {/* key로 기록이 바뀔 때마다 초안을 새로 만든다 */}
-      {entry ? <EditBody key={entry.id} entry={entry} timeZone={timeZone} onSave={onSave} onDelete={onDelete} /> : null}
-    </BottomSheet>
-  );
+  // key로 기록이 바뀔 때마다 초안을 새로 만든다
+  return entry ? (
+    <EditBody key={entry.id} entry={entry} timeZone={timeZone} onClose={onClose} onSave={onSave} onDelete={onDelete} />
+  ) : null;
 };
 
 const EditBody = ({
   entry,
   timeZone,
+  onClose,
   onSave,
   onDelete,
 }: {
   entry: LogEntry;
   timeZone: string;
+  onClose: () => void;
   onSave: (entry: LogEntry) => void;
   onDelete: (id: string) => void;
 }) => {
   const [draft, setDraft] = useState(entry);
   return (
-    <div className="space-y-6">
+    <BottomSheet
+      open
+      title="기록 고치기"
+      onClose={onClose}
+      footer={
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => onDelete(entry.id)}
+            className="h-12 flex-1 rounded-xl bg-danger/10 font-bold text-danger"
+          >
+            삭제
+          </button>
+          <button
+            type="button"
+            onClick={() => onSave(visibleValues(draft))}
+            className="h-12 flex-2 rounded-xl bg-accent font-bold text-accent-foreground"
+          >
+            완료
+          </button>
+        </div>
+      }
+    >
       <EditForm entry={draft} timeZone={timeZone} onChange={setDraft} />
-      <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={() => onDelete(entry.id)}
-          className="h-12 flex-1 rounded-xl bg-danger/10 font-bold text-danger"
-        >
-          삭제
-        </button>
-        <button
-          type="button"
-          onClick={() => onSave(visibleValues(draft))}
-          className="h-12 flex-2 rounded-xl bg-accent font-bold text-accent-foreground"
-        >
-          완료
-        </button>
-      </div>
-    </div>
+    </BottomSheet>
   );
 };
 
