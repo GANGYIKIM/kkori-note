@@ -1,0 +1,63 @@
+# 채팅 스크롤 잠금과 진행 중 띠 위치 (R0)
+
+- R 문서: [R0](README.md)
+- 근거: R0-2, R0-3
+
+## 계획
+
+### 만들 것
+
+**시트** — `src/components/layout/BottomSheet.tsx`
+
+- 판의 폭과 모양은 지금 그대로다.
+- 열려 있는 동안 문서 스크롤을 잠근다: 열 때 `document.documentElement.style.overflow`를 `"hidden"`으로 두고, 닫거나 사라질 때 열기 전 값으로 되돌린다. 채팅 시트와 칩 수정 시트 모두 잠근다.
+
+**메인** — `src/components/main/Home.tsx`
+
+- 목록(`main`) 안의 `OngoingEpisodeBar`를 없앤다.
+- 하단 입력창 영역을 `fixed`에서 `sticky bottom-0`으로 바꾼다. 안쪽(`mx-auto w-[92%]`)에 `OngoingEpisodeBar`, `ComposerLauncher`를 이 순서로 `space-y-2`로 둔다. 목록 아래 여백은 `pb-20`에서 `pb-4`로 줄인다.
+- 채팅 하단(`BottomSheet`와 `SidePanel`의 `footer`)을 `OngoingEpisodeBar` + `MessageComposer` 순서로 `space-y-2`에 둔다.
+
+**진행 중 띠** — `src/components/entry/OngoingEpisodeBar.tsx`
+
+- 상단 주석의 위치 설명을 "입력창 바로 위"로 고친다. 모양과 props는 그대로다.
+
+### 바꾸는 곳
+
+- 모양이 바뀜: 없음 (props와 export는 그대로). 고치는 파일: `src/components/layout/BottomSheet.tsx`, `src/components/main/Home.tsx`, `src/components/entry/OngoingEpisodeBar.tsx`
+
+### 완료 기준
+
+- 이 작업으로 체크하는 PRD 수락 기준: R0-2.4. R0-3.3은 채팅 시트 폭을 정한 뒤 체크한다(열린 질문).
+
+| 기준 | 확인 방법 |
+|---|---|
+| 채팅을 열고 스크롤해도 문서 스크롤 위치가 그대로이고, 닫으면 문서 스크롤이 다시 된다 (R0-3.3의 스크롤 부분) | Chrome에서 재고 결과의 "수동 확인"에 쓴다 |
+| R0-2.4 열린 에피소드가 있을 때 띠가 모바일 메인 하단 입력창 바로 위, 채팅 시트 입력창 바로 위, PC 채팅 칸 입력창 바로 위에 있고 목록 위쪽에는 없다 | Chrome에서 위치를 재고 쓴다 |
+| 칩 수정 시트는 지금 모양 그대로이고, 열려 있는 동안 뒤가 스크롤되지 않는다 | Chrome에서 확인한다 |
+| 하단 입력창이 목록 마지막 기록을 가리지 않는다 | Chrome에서 맨 아래로 스크롤해 확인한다 |
+| 형식·타입·빌드 | `lint`, `typecheck`, `test`, `build` |
+
+### 범위 밖
+
+- 채팅 시트 판의 폭 (`docs/prd/open-questions.md`. ADR-0014는 창 폭 100%로 정했지만 다시 보기로 함)
+- 진행 중 띠 최대 2줄 (R12)
+- 목록 순서·맨 아래에서 열기 (하위 작업 3)
+- 오버레이 스크롤바 (하위 작업 5)
+
+## 결과
+
+### 2026-11-02 · 68bc8cd..21c6be3
+
+- 왜: 처음 구현
+- 한 일: `BottomSheet`가 열려 있는 동안 `documentElement`의 `overflow`를 `hidden`으로 두고 닫으면 되돌린다. 진행 중 띠를 목록 위쪽에서 빼 모바일 메인 하단 입력창, 채팅 시트 입력창, PC 채팅 칸 입력창 바로 위에 두었다. 하단 입력창 영역을 `fixed`에서 `sticky bottom-0`으로 바꿨다.
+- 수동 확인: R0-2.4 (아래). Chrome 500px 창과 390px·1280px iframe에서 확인했다.
+  - R0-2.4: 390px 메인에서 띠 [top 678, bottom 732], 하단 입력창 top 740. 채팅 시트에서 띠 bottom 736, 입력창 top 744. 1280px PC 채팅 칸에서 띠 bottom 736, 입력창 top 744. 목록(`main`) 안에는 띠가 없다.
+  - 스크롤 잠금: 500px 창에서 문서를 500px 내린 뒤 채팅을 열고 시트와 바깥 어두운 영역에서 마우스 휠을 굴려도 문서 위치가 500 그대로였다. 채팅 안은 스크롤됐다. 칩 수정 시트도 같았다. 닫은 뒤 휠로 800까지 내려갔다.
+  - 390px에서 맨 아래로 내렸을 때 마지막 기록 bottom 638, 하단 입력창 영역 top 654로 가리지 않는다.
+- 결정과 맞바꾼 것:
+  - 칩 수정 시트에도 스크롤 잠금을 걸었다.
+  - 하단 입력창을 `sticky`로 바꿔 띠 높이가 바뀌어도 목록 아래 여백을 따로 계산하지 않는다. 320px 미만 창에서는 입력창이 창 폭이 아니라 본문 폭(320px)을 따른다.
+  - PC에서 채팅이 열린 상태로 남아 있으면(좁은 창에서 열고 넓힌 경우) 숨은 시트 때문에 문서 스크롤이 잠긴다. PC 목록은 칸 안에서 스크롤해서 쓰는 데 지장은 없다.
+- 계획과 달라진 점: 채팅 시트 판을 창 폭 100%로 바꾸는 것을 뺐다(사용자 요청, 열린 질문). 그래서 R0-3.3은 체크하지 않았다.
+- AI가 틀렸다가 고친 것: 스크롤 잠금을 `window.scrollTo`로 확인했다가 위치가 바뀌었다 → `overflow: hidden`은 코드로 하는 스크롤을 막지 않는다 → 실제 마우스 휠로 다시 확인했다.
