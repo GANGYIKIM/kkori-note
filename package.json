@@ -10,6 +10,7 @@
     "lint:fix": "eslint --fix && prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "metrics": "vitest run --config vitest.metrics.config.mts",
     "typecheck": "tsc --noEmit",
     "prepare": "husky"
   },
