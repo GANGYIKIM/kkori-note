@@ -14,7 +14,7 @@ const EntryList = ({ status }: { status: Status }) => (
   <LoadStateView
     state={status === "data" ? { status, data: MOCK_ENTRIES.slice(0, 3) } : { status }}
     loading={<ListSkeleton />}
-    empty={<FirstRecordGuide onLoadSample={() => {}} />}
+    empty={<FirstRecordGuide nowIso={MOCK_NOW} timeZone={MOCK_TIME_ZONE} onLoadSample={() => {}} />}
     error={<ErrorState message="기록을 불러오지 못했어요" onRetry={() => {}} />}
   >
     {(entries) => <DateGroupedList entries={entries} nowIso={MOCK_NOW} timeZone={MOCK_TIME_ZONE} />}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
-import { getStorage } from "@/lib/client/storage";
+import { DEFAULT_DOG_ID, getStorage } from "@/lib/client/storage";
 import { DEFAULT_MODE, LABELS, MODES, type Mode } from "@/lib/domain/values";
 import { DogSchema, type Dog } from "@/lib/domain/types";
 
@@ -30,7 +30,7 @@ const ProfileForm = () => {
       const storage = getStorage();
       const [dog, settings] = await Promise.all([storage.getDog(), storage.getSettings()]);
       if (cancelled) return;
-      setDogId(dog?.id ?? crypto.randomUUID());
+      setDogId(dog?.id ?? DEFAULT_DOG_ID);
       setName(dog?.name ?? "");
       setAge(dog?.ageYears?.toString() ?? "");
       setWeight(dog?.weightKg?.toString() ?? "");
