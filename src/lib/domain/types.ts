@@ -97,10 +97,40 @@ const ChatMessageSchema = z.object({
 });
 type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
+const CHAT_INTENTS = ["greeting", "record", "set_name", "question", "other"] as const;
+
+/** 채팅 LLM 출력. 기록 값은 이 모양만 보고 정의(kinds.ts)와는 chat-turn.ts에서 맞춰 본다 */
+const ChatTurnSchema = z.object({
+  intent: z.enum(CHAT_INTENTS).catch("other"),
+  reply: z.string().max(1000).catch(""),
+  dogName: z.string().trim().min(1).max(30).nullable().catch(null),
+  entries: z
+    .array(
+      z.object({
+        kindId: z.string(),
+        values: z.record(z.string(), z.union([z.string(), z.number()])).catch({}),
+        occurredAt: z.string(),
+        timePrecision: z.enum(TIME_PRECISIONS).catch("estimated"),
+        durationSec: z.number().nullable().catch(null),
+      }),
+    )
+    .catch([]),
+});
+type ChatTurn = z.infer<typeof ChatTurnSchema>;
+
 const SettingsSchema = z.object({
   mode: z.enum(MODES).default("neutral"),
 });
 type Settings = z.infer<typeof SettingsSchema>;
 
-export { DogSchema, LogEntrySchema, UncertainFieldSchema, ChatBlockSchema, ChatMessageSchema, SettingsSchema };
-export type { Dog, LogEntry, UncertainField, ChatBlock, ChatBlockInput, ChatMessage, Settings };
+export {
+  DogSchema,
+  LogEntrySchema,
+  UncertainFieldSchema,
+  ChatBlockSchema,
+  ChatMessageSchema,
+  CHAT_INTENTS,
+  ChatTurnSchema,
+  SettingsSchema,
+};
+export type { Dog, LogEntry, UncertainField, ChatBlock, ChatBlockInput, ChatMessage, ChatTurn, Settings };
