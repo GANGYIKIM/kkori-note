@@ -17,22 +17,6 @@ export default function SettingsPage() {
         <div className="ml-[max(calc((100%+0.875rem)*0.04),calc((100%+0.875rem-672px)/2))] w-[min(calc((100%+0.875rem)*0.92),calc(100%-(100%+0.875rem)*0.04))] max-w-[672px] space-y-8 pt-2 pb-10">
           <ProfileForm />
 
-          <section className="space-y-3">
-            <h2 className="font-bold">샘플 기록</h2>
-            <p className="text-sm text-muted">
-              최근 2주치 샘플 기록을 넣어 앱을 바로 체험해 볼 수 있어요. 직접 남긴 기록은 지우지 않아요.
-            </p>
-            <div className="flex gap-2">
-              <button type="button" className="h-11 flex-1 rounded-xl bg-accent/10 text-sm font-bold text-accent">
-                샘플 기록 불러오기
-              </button>
-              <button type="button" className="h-11 flex-1 rounded-xl bg-surface text-sm font-bold">
-                샘플만 지우기
-              </button>
-            </div>
-            <p className="text-xs text-muted">화면 미리보기 단계라 아직 동작하지 않아요.</p>
-          </section>
-
           <section className="space-y-2 rounded-2xl bg-surface p-4">
             <h2 className="font-bold">꼭 알아 주세요</h2>
             <p className="text-sm/relaxed text-muted">

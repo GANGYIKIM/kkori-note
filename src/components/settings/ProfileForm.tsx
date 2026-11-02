@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { DEFAULT_DOG_ID, getStorage } from "@/lib/client/storage";
-import { DEFAULT_MODE, LABELS, MODES, type Mode } from "@/lib/domain/values";
 import { DogSchema, type Dog } from "@/lib/domain/types";
 
 type Status = "loading" | "ready" | "saved" | "error";
@@ -21,21 +20,19 @@ const ProfileForm = () => {
   const [age, setAge] = useState("");
   const [weight, setWeight] = useState("");
   const [notes, setNotes] = useState("");
-  const [mode, setMode] = useState<Mode>(DEFAULT_MODE);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       const storage = getStorage();
-      const [dog, settings] = await Promise.all([storage.getDog(), storage.getSettings()]);
+      const dog = await storage.getDog();
       if (cancelled) return;
       setDogId(dog?.id ?? DEFAULT_DOG_ID);
       setName(dog?.name ?? "");
       setAge(dog?.ageYears?.toString() ?? "");
       setWeight(dog?.weightKg?.toString() ?? "");
       setNotes(dog?.notes ?? "");
-      setMode(settings.mode);
       setStatus("ready");
     })().catch(() => {
       if (!cancelled) {
@@ -66,7 +63,6 @@ const ProfileForm = () => {
     try {
       const storage = getStorage();
       await storage.saveDog(result.data);
-      await storage.saveSettings({ mode });
       setMessage("저장했어요.");
       setStatus("saved");
     } catch {
@@ -112,30 +108,6 @@ const ProfileForm = () => {
           onChange={(e) => setNotes(e.target.value)}
         />
       </label>
-
-      <fieldset className="space-y-2">
-        <legend className="text-sm">상담 태도</legend>
-        <div className="flex gap-2">
-          {MODES.map((m) => (
-            <label
-              key={m}
-              className={`flex-1 cursor-pointer rounded-xl border px-3 py-2 text-center text-sm ${
-                mode === m ? "border-accent bg-accent font-bold text-accent-foreground" : "border-border bg-background"
-              }`}
-            >
-              <input
-                type="radio"
-                name="mode"
-                value={m}
-                checked={mode === m}
-                onChange={() => setMode(m)}
-                className="sr-only"
-              />
-              {LABELS.mode[m]}
-            </label>
-          ))}
-        </div>
-      </fieldset>
 
       <button type="submit" className="w-full rounded-xl bg-accent py-3 font-bold text-accent-foreground">
         저장
