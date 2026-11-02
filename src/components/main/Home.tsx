@@ -179,19 +179,15 @@ const Home = () => {
     }
 
     const { turn } = result;
-    if (turn.intent === "set_name" && turn.dogName) {
+    // intent를 잘못 골라도 이름이 오면 저장한다
+    const newName = turn.dogName && turn.dogName !== dogName ? turn.dogName : null;
+    if (newName) {
       try {
-        const name = await saveDogName(turn.dogName);
-        appendMessage(
-          assistantMessage([
-            { type: "text", text: turn.reply || `이름을 ${name}(으)로 저장했어요.` },
-            { type: "notice", tone: "info", text: "설정에서 이름을 확인할 수 있어요." },
-          ]),
-        );
+        await saveDogName(newName);
       } catch {
         appendMessage(assistantMessage([{ type: "notice", tone: "error", text: "이름을 저장하지 못했어요." }]));
+        return;
       }
-      return;
     }
 
     const drafts = toDrafts(turn.entries, { nowIso: sentAt, timeZone, rawText: text });
@@ -220,8 +216,22 @@ const Home = () => {
       setEntries((list) => [...list, ...saved]);
       appendMessage(
         assistantMessage([
-          { type: "text", text: recordReply(dogName ?? "강아지", drafts) },
+          ...(turn.reply ? [{ type: "text" as const, text: turn.reply }] : []),
+          { type: "text", text: recordReply(newName ?? dogName ?? "강아지", drafts) },
           { type: "entries", entryIds: saved.map((e) => e.id) },
+          ...(newName
+            ? [{ type: "notice" as const, tone: "info" as const, text: "설정에서 이름을 확인할 수 있어요." }]
+            : []),
+        ]),
+      );
+      return;
+    }
+
+    if (newName) {
+      appendMessage(
+        assistantMessage([
+          { type: "text", text: turn.reply || `이름을 ${newName}(으)로 저장했어요.` },
+          { type: "notice", tone: "info", text: "설정에서 이름을 확인할 수 있어요." },
         ]),
       );
       return;
@@ -274,7 +284,7 @@ const Home = () => {
             <LoadStateView
               state={listState}
               loading={<ListSkeleton />}
-              empty={<FirstRecordGuide nowIso={nowIso} timeZone={timeZone} />}
+              empty={<FirstRecordGuide nowIso={nowIso} timeZone={timeZone} dogName={dogName} />}
               error={<ErrorState message="기록을 불러오지 못했어요." onRetry={reload} />}
             >
               {(list) => <DateGroupedList entries={list} nowIso={nowIso} timeZone={timeZone} onSelect={setEditing} />}
