@@ -23,7 +23,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko" className={`${notoSansKr.variable} h-full antialiased`}>
-      <body className="min-h-dvh">
+      <body className="min-h-dvh min-w-80">
         <div className="flex min-h-dvh w-full flex-col">{children}</div>
       </body>
     </html>

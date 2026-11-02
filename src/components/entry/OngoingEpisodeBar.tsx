@@ -3,7 +3,7 @@ import type { LogEntry } from "@/lib/domain/types";
 import { kindLabel } from "@/lib/domain/kinds";
 import { kindStyle } from "@/lib/domain/values";
 
-/** 메인 위쪽 "진행 중" 띠. 열린 에피소드마다 한 줄, [끝] 버튼으로 닫는다 (PRD R1) */
+/** 입력창 바로 위의 "진행 중" 띠. 열린 에피소드마다 한 줄, [끝] 버튼으로 닫는다 (PRD R0-2, R12) */
 const OngoingEpisodeBar = ({
   episodes,
   nowIso,
