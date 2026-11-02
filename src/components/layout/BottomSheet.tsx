@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { CloseIcon } from "@/components/common/Icons";
+import { ScrollArea } from "@/components/common/ScrollArea";
 
 /**
- * 아래에서 올라오는 시트. full이면 화면 전체(채팅), 아니면 내용 높이만큼(칩 수정).
- * stickToBottom이면 열 때와 내용이 늘 때 맨 아래로 내린다(채팅의 최근 대화). 열려 있는 동안 뒤 문서는 스크롤되지 않는다.
+ * 아래에서 올라오는 시트. full이면 화면 전체(채팅)를 덮고 안쪽 내용은 화면 폭의 92%, 아니면 내용 높이만큼·최대 448px(칩 수정).
+ * stickToBottom이면 본문이 아래부터 쌓여 열 때 맨 아래가 보이고, 맨 아래에 있을 때 내용이 늘면 따라간다(채팅의 최근 대화). 열려 있는 동안 뒤 문서는 스크롤되지 않는다.
  * className은 바깥 틀에 붙는다(예: 넓은 화면에서 숨기기).
  */
 const BottomSheet = ({
@@ -27,8 +28,6 @@ const BottomSheet = ({
   children: ReactNode;
   footer?: ReactNode;
 }) => {
-  const bodyRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -46,10 +45,6 @@ const BottomSheet = ({
     };
   }, [open]);
 
-  useEffect(() => {
-    if (open && stickToBottom && bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
-  }, [open, stickToBottom, children]);
-
   if (!open) return null;
 
   return (
@@ -61,20 +56,29 @@ const BottomSheet = ({
     >
       <button type="button" aria-label="닫기" onClick={onClose} className="absolute inset-0 bg-black/40" />
       <div
-        className={`relative mt-auto flex w-full max-w-md flex-col bg-background shadow-xl ${
-          full ? "h-dvh" : "max-h-[85dvh] rounded-t-[20px]"
+        className={`relative mt-auto flex w-full flex-col bg-background shadow-xl ${
+          full ? "h-dvh" : "max-h-[85dvh] max-w-md rounded-t-[20px]"
         }`}
       >
-        <header className="flex h-14 shrink-0 items-center justify-between border-b border-border px-4">
+        <header
+          className={`flex h-14 shrink-0 items-center justify-between border-b border-border ${full ? "px-[4%]" : "px-4"}`}
+        >
           <h2 className="font-bold">{title}</h2>
           <button type="button" onClick={onClose} aria-label="닫기" className="-mr-2 p-2 text-muted">
             <CloseIcon />
           </button>
         </header>
-        <div ref={bodyRef} className="min-h-0 flex-1 overflow-y-auto p-4">
-          {children}
-        </div>
-        {footer ? <div className="shrink-0 border-t border-border px-4 py-3">{footer}</div> : null}
+        <ScrollArea
+          className="flex-1"
+          viewportClassName={`py-4 ${full ? "pr-[max(0px,calc(4%-0.875rem))] pl-[4%]" : "pr-0.5 pl-4"} ${
+            stickToBottom ? "flex flex-col-reverse" : ""
+          }`}
+        >
+          <div>{children}</div>
+        </ScrollArea>
+        {footer ? (
+          <div className={`shrink-0 border-t border-border py-3 ${full ? "px-[4%]" : "px-4"}`}>{footer}</div>
+        ) : null}
       </div>
     </div>
   );

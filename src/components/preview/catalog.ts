@@ -17,6 +17,14 @@ import { variants as EditSheet } from "@/components/entry/EditSheet.preview";
 import { variants as OngoingEpisodeBar } from "@/components/entry/OngoingEpisodeBar.preview";
 import { variants as Home } from "@/components/main/Home.preview";
 import { variants as ProfileForm } from "@/components/settings/ProfileForm.preview";
+import { variants as ErrorState } from "@/components/common/ErrorState.preview";
+import { variants as LoadStateView } from "@/components/common/LoadStateView.preview";
+import { variants as ScrollArea } from "@/components/common/ScrollArea.preview";
+import { variants as Skeleton } from "@/components/common/Skeleton.preview";
+import { variants as ConversationSkeleton } from "@/components/chat/ConversationSkeleton.preview";
+import { variants as Greeting } from "@/components/chat/Greeting.preview";
+import { variants as FirstRecordGuide } from "@/components/entry/FirstRecordGuide.preview";
+import { variants as ListSkeleton } from "@/components/entry/ListSkeleton.preview";
 import type { Variant } from "./variant";
 
 const FOLDER_ORDER = ["common", "layout", "chat", "entry", "main", "settings"] as const;
@@ -25,20 +33,28 @@ const FOLDER_ORDER = ["common", "layout", "chat", "entry", "main", "settings"] a
 const CATALOG: Record<string, readonly Variant[]> = {
   "common/Banner": Banner,
   "common/EmptyState": EmptyState,
+  "common/ErrorState": ErrorState,
   "common/Icons": Icons,
   "common/ListRow": ListRow,
+  "common/LoadStateView": LoadStateView,
+  "common/ScrollArea": ScrollArea,
+  "common/Skeleton": Skeleton,
   "common/Tag": Tag,
   "layout/AppHeader": AppHeader,
   "layout/BottomSheet": BottomSheet,
   "layout/SidePanel": SidePanel,
   "chat/Conversation": Conversation,
+  "chat/ConversationSkeleton": ConversationSkeleton,
   "chat/EntryChipCard": EntryChipCard,
   "chat/EpisodeCard": EpisodeCard,
   "chat/EvidenceCard": EvidenceCard,
+  "chat/Greeting": Greeting,
   "chat/MessageComposer": MessageComposer,
   "chat/RiskBanner": RiskBanner,
   "entry/DateGroupedList": DateGroupedList,
   "entry/EditSheet": EditSheet,
+  "entry/FirstRecordGuide": FirstRecordGuide,
+  "entry/ListSkeleton": ListSkeleton,
   "entry/OngoingEpisodeBar": OngoingEpisodeBar,
   "main/Home": Home,
   "settings/ProfileForm": ProfileForm,

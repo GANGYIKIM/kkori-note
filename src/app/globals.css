@@ -88,6 +88,15 @@
     sans-serif;
 }
 
+/* 기본 스크롤바는 숨기고 ScrollArea의 오버레이 막대를 쓴다 (ADR-0015) */
+* {
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BackIcon } from "@/components/common/Icons";
+import { ScrollArea } from "@/components/common/ScrollArea";
 import { ProfileForm } from "@/components/settings/ProfileForm";
 
 export default function SettingsPage() {
@@ -12,8 +13,8 @@ export default function SettingsPage() {
         <h1 className="text-lg font-bold">설정</h1>
       </header>
 
-      <div className="min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto w-[92%] max-w-[672px] space-y-8 pt-2 pb-10">
+      <ScrollArea className="flex-1">
+        <div className="ml-[max(calc((100%+0.875rem)*0.04),calc((100%+0.875rem-672px)/2))] w-[min(calc((100%+0.875rem)*0.92),calc(100%-(100%+0.875rem)*0.04))] max-w-[672px] space-y-8 pt-2 pb-10">
           <ProfileForm />
 
           <section className="space-y-3">
@@ -40,7 +41,7 @@ export default function SettingsPage() {
             </p>
           </section>
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 }

@@ -14,12 +14,13 @@ import {
 } from "@/lib/mock/data";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { BottomSheet } from "@/components/layout/BottomSheet";
+import { ScrollArea } from "@/components/common/ScrollArea";
 import { MessageComposer, ComposerLauncher } from "@/components/chat/MessageComposer";
 import { SidePanel } from "@/components/layout/SidePanel";
 import { Conversation } from "@/components/chat/Conversation";
-import { EmptyState } from "@/components/common/EmptyState";
 import { EditSheet } from "@/components/entry/EditSheet";
 import { DateGroupedList } from "@/components/entry/DateGroupedList";
+import { FirstRecordGuide } from "@/components/entry/FirstRecordGuide";
 import { OngoingEpisodeBar } from "@/components/entry/OngoingEpisodeBar";
 
 const INITIAL_MESSAGES: ChatMessage[] = MAIN_CHAT_CASE_IDS.flatMap(
@@ -117,34 +118,22 @@ const Home = () => {
   // 넓은 화면(lg 이상)은 왼쪽 기록 목록 + 오른쪽 채팅 패널, 좁은 화면은 입력창을 누르면 채팅 시트가 열린다
   return (
     <div className="h-dvh lg:mx-auto lg:grid lg:w-[92%] lg:max-w-[1200px] lg:grid-cols-[minmax(0,1fr)_min(40%,420px)]">
-      <div className="flex h-full min-h-0 flex-col lg:pr-6">
+      <div className="flex h-full min-h-0 flex-col">
         <div className="shrink-0 bg-background">
           <div className="mx-auto w-[92%] lg:w-full">
             <AppHeader dogName={MOCK_DOG.name} />
           </div>
         </div>
 
-        <div className="flex min-h-0 flex-1 flex-col-reverse overflow-y-auto">
-          <main className="mx-auto w-[92%] space-y-4 pt-2 pb-4 lg:w-full lg:pb-8">
+        <ScrollArea className="flex-1" viewportClassName="flex flex-col-reverse">
+          <main className="ml-[calc((100%+0.875rem)*0.04)] w-[min(calc((100%+0.875rem)*0.92),calc(100%-(100%+0.875rem)*0.04))] space-y-4 pt-2 pb-4 lg:ml-0 lg:w-full lg:pb-8">
             {entries.length === 0 ? (
-              <EmptyState
-                title="아직 기록이 없어요"
-                description={'아래 입력창에 이렇게 적어 보세요.\n"방금 배변했는데 무른 편이야"'}
-                action={
-                  <button
-                    type="button"
-                    onClick={() => setEntries(MOCK_ENTRIES)}
-                    className="h-10 rounded-xl bg-accent/10 px-4 text-sm font-bold text-accent"
-                  >
-                    샘플 기록 불러오기
-                  </button>
-                }
-              />
+              <FirstRecordGuide onLoadSample={() => setEntries(MOCK_ENTRIES)} />
             ) : (
               <DateGroupedList entries={entries} nowIso={MOCK_NOW} timeZone={MOCK_TIME_ZONE} onSelect={setEditing} />
             )}
           </main>
-        </div>
+        </ScrollArea>
 
         <div className="shrink-0 bg-background pt-2 pb-4 lg:hidden">
           <div className="mx-auto w-[92%] space-y-2">
