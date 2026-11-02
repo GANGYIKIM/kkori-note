@@ -1,13 +1,17 @@
 import { z } from "zod";
+import type { NumberRule } from "./number-input";
 import { MODES, RISK_GRADES, TIME_PRECISIONS, WEATHERS } from "./values";
+
+/** 나이(살). 추정 나이도 허용해 소수 한 자리까지 */
+const AGE_RULE: NumberRule = { min: 0, max: 40, integer: false, decimals: 1 };
+const WEIGHT_RULE: NumberRule = { min: 0.1, max: 120, integer: false, decimals: 1 };
 
 /** 강아지 프로필. 한 마리 고정이지만 dogId 기준으로 설계해 추후 초대 기반 접근을 붙일 수 있게 한다. */
 const DogSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1).max(30),
-  /** 나이(살). 추정 나이도 허용 */
-  ageYears: z.number().min(0).max(40).nullable(),
-  weightKg: z.number().min(0.1).max(120).nullable(),
+  ageYears: z.number().min(AGE_RULE.min).max(AGE_RULE.max).nullable(),
+  weightKg: z.number().min(WEIGHT_RULE.min).max(WEIGHT_RULE.max).nullable(),
   /** 특이사항(알레르기, 기저질환 메모 등). 사용자가 직접 적는 자유 메모 */
   notes: z.string().max(500).default(""),
 });
@@ -124,6 +128,8 @@ const SettingsSchema = z.object({
 type Settings = z.infer<typeof SettingsSchema>;
 
 export {
+  AGE_RULE,
+  WEIGHT_RULE,
   DogSchema,
   LogEntrySchema,
   UncertainFieldSchema,

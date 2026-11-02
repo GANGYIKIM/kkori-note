@@ -1,17 +1,27 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { DEFAULT_DOG_ID, getStorage } from "@/lib/client/storage";
-import { DogSchema, type Dog } from "@/lib/domain/types";
+import { AGE_RULE, DogSchema, WEIGHT_RULE, type Dog } from "@/lib/domain/types";
+import { commitNumberText, rangeHint, sanitizeNumberText, type NumberRule } from "@/lib/domain/number-input";
+import { UnitInput } from "@/components/common/UnitInput";
 
 type Status = "loading" | "ready" | "saved" | "error";
 
-const toNumberOrNull = (value: string): number | null => {
-  const trimmed = value.trim();
-  if (trimmed === "") return null;
-  const parsed = Number(trimmed);
-  return Number.isFinite(parsed) ? parsed : null;
-};
+/** 칠 때는 규칙대로 거르고, 칸을 벗어날 때 최소값을 맞춘 값으로 되돌려 넣는다 */
+const numberInputProps = (rule: NumberRule, text: string, setText: (text: string) => void) => ({
+  value: text,
+  inputMode: rule.integer ? ("numeric" as const) : ("decimal" as const),
+  placeholder: rangeHint(rule),
+  onChange: (e: ChangeEvent<HTMLInputElement>) => {
+    const next = sanitizeNumberText(e.target.value, rule);
+    if (next !== null) setText(next);
+  },
+  onBlur: () => {
+    const value = commitNumberText(text, rule);
+    setText(value === null ? "" : String(value));
+  },
+});
 
 const ProfileForm = () => {
   const [status, setStatus] = useState<Status>("loading");
@@ -50,8 +60,8 @@ const ProfileForm = () => {
     const candidate: Dog = {
       id: dogId,
       name: name.trim(),
-      ageYears: toNumberOrNull(age),
-      weightKg: toNumberOrNull(weight),
+      ageYears: commitNumberText(age, AGE_RULE),
+      weightKg: commitNumberText(weight, WEIGHT_RULE),
       notes: notes.trim(),
     };
     const result = DogSchema.safeParse(candidate);
@@ -85,17 +95,12 @@ const ProfileForm = () => {
       </label>
       <div className="grid grid-cols-2 gap-3">
         <label className="block text-sm">
-          나이(살)
-          <input className={inputClass} inputMode="decimal" value={age} onChange={(e) => setAge(e.target.value)} />
+          나이
+          <UnitInput unit="살" className="mt-1" {...numberInputProps(AGE_RULE, age, setAge)} />
         </label>
         <label className="block text-sm">
-          체중(kg)
-          <input
-            className={inputClass}
-            inputMode="decimal"
-            value={weight}
-            onChange={(e) => setWeight(e.target.value)}
-          />
+          체중
+          <UnitInput unit="kg" className="mt-1" {...numberInputProps(WEIGHT_RULE, weight, setWeight)} />
         </label>
       </div>
       <label className="block text-sm">

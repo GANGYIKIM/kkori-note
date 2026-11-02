@@ -3,6 +3,7 @@ import { variants as EmptyState } from "@/components/common/EmptyState.preview";
 import { variants as Icons } from "@/components/common/Icons.preview";
 import { variants as ListRow } from "@/components/common/ListRow.preview";
 import { variants as Tag } from "@/components/common/Tag.preview";
+import { variants as UnitInput } from "@/components/common/UnitInput.preview";
 import { variants as AppHeader } from "@/components/layout/AppHeader.preview";
 import { variants as BottomSheet } from "@/components/layout/BottomSheet.preview";
 import { variants as SidePanel } from "@/components/layout/SidePanel.preview";
@@ -40,6 +41,7 @@ const CATALOG: Record<string, readonly Variant[]> = {
   "common/ScrollArea": ScrollArea,
   "common/Skeleton": Skeleton,
   "common/Tag": Tag,
+  "common/UnitInput": UnitInput,
   "layout/AppHeader": AppHeader,
   "layout/BottomSheet": BottomSheet,
   "layout/SidePanel": SidePanel,

@@ -4,7 +4,15 @@ import { useState, type ReactNode } from "react";
 import { formatLocalTime, localDateKey } from "@/lib/domain/datetime";
 import type { LogEntry } from "@/lib/domain/types";
 import { DEFAULT_KINDS, findKind, type EntryValues, type FieldDef, type Option } from "@/lib/domain/kinds";
+import {
+  commitNumberText,
+  rangeHint,
+  ruleFromField,
+  sanitizeNumberText,
+  type NumberRule,
+} from "@/lib/domain/number-input";
 import { BottomSheet } from "@/components/layout/BottomSheet";
+import { UnitInput } from "@/components/common/UnitInput";
 
 const DETAIL_PLACEHOLDER: Record<string, string> = {
   meal: "예: 사료 반 컵",
@@ -16,6 +24,8 @@ const DETAIL_PLACEHOLDER: Record<string, string> = {
 };
 
 const KIND_OPTIONS: Option[] = DEFAULT_KINDS.map((k) => ({ id: k.id, label: k.label }));
+
+const DURATION_MIN_RULE: NumberRule = { min: 0, max: Infinity, integer: true, decimals: 0 };
 
 /** 초콜릿 종류는 초콜릿일 때만, 양은 위험 음식을 골랐을 때만 묻는다 */
 const isHidden = (field: FieldDef, values: EntryValues): boolean => {
@@ -57,7 +67,6 @@ const EditForm = ({
   };
   const kind = findKind(entry.kindId);
   const fields = (kind?.fields ?? []).filter((f) => !isHidden(f, entry.values));
-  const minutes = entry.durationSec === null ? "" : String(Math.round(entry.durationSec / 60));
 
   return (
     <div className="space-y-5">
@@ -84,16 +93,12 @@ const EditForm = ({
         ))}
 
       {kind?.episode || entry.kindId === "walk" ? (
-        <Field label="지속시간 (분)">
-          <input
-            inputMode="numeric"
-            value={minutes}
-            onChange={(e) => {
-              const n = Number.parseInt(e.target.value, 10);
-              set({ durationSec: Number.isFinite(n) && n >= 0 ? n * 60 : null });
-            }}
-            placeholder="모름"
-            className="h-11 w-full rounded-lg border border-border bg-background px-3"
+        <Field label="지속시간">
+          <NumberValueInput
+            rule={DURATION_MIN_RULE}
+            unit="분"
+            value={entry.durationSec === null ? null : Math.round(entry.durationSec / 60)}
+            onChange={(minutes) => set({ durationSec: minutes === null ? null : minutes * 60 })}
           />
         </Field>
       ) : null}
@@ -141,16 +146,12 @@ const ValueField = ({
       );
     case "number":
       return (
-        <Field label={`${field.label} (${field.unit})`}>
-          <input
-            inputMode={field.integer ? "numeric" : "decimal"}
-            value={value ?? ""}
-            onChange={(e) => {
-              const n = Number(e.target.value);
-              onChange(field.id, e.target.value.trim() === "" || !Number.isFinite(n) ? undefined : n);
-            }}
-            placeholder="모름"
-            className="h-11 w-full rounded-lg border border-border bg-background px-3"
+        <Field label={field.label}>
+          <NumberValueInput
+            rule={ruleFromField(field)}
+            unit={field.unit}
+            value={typeof value === "number" ? value : null}
+            onChange={(next) => onChange(field.id, next ?? undefined)}
           />
         </Field>
       );
@@ -229,6 +230,40 @@ const EditBody = ({
     >
       <EditForm entry={draft} timeZone={timeZone} onChange={setDraft} />
     </BottomSheet>
+  );
+};
+
+/** 입력 글자를 따로 들고 있어 소수점·중간 입력이 사라지지 않는다. 칠 때마다 값을 넘기고, 벗어날 때 최소값을 맞춘다 */
+const NumberValueInput = ({
+  rule,
+  unit,
+  value,
+  onChange,
+}: {
+  rule: NumberRule;
+  unit: string;
+  value: number | null;
+  onChange: (value: number | null) => void;
+}) => {
+  const [text, setText] = useState(value === null ? "" : String(value));
+  return (
+    <UnitInput
+      unit={unit}
+      inputMode={rule.integer ? "numeric" : "decimal"}
+      placeholder={rangeHint(rule)}
+      value={text}
+      onChange={(e) => {
+        const next = sanitizeNumberText(e.target.value, rule);
+        if (next === null) return;
+        setText(next);
+        onChange(next === "" ? null : Number(next));
+      }}
+      onBlur={() => {
+        const committed = commitNumberText(text, rule);
+        setText(committed === null ? "" : String(committed));
+        onChange(committed);
+      }}
+    />
   );
 };
 
