@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { formatLocalTime } from "@/lib/domain/datetime";
+import { formatEntryTime } from "@/lib/domain/datetime";
 import { summarizeEntry } from "@/lib/domain/entry-summary";
 import type { LogEntry, UncertainField } from "@/lib/domain/types";
 import { fieldLabel, findKind, kindLabel, optionLabel } from "@/lib/domain/kinds";
@@ -63,7 +63,7 @@ const EntryChipCard = ({
               >
                 <Tag className={kindStyle(entry.kindId).tag}>{kindLabel(entry.kindId)}</Tag>
                 <Chip>
-                  {formatLocalTime(entry.occurredAt, timeZone)}
+                  {formatEntryTime(entry, timeZone)}
                   {entry.timePrecision === "estimated" ? <span className="ml-1 text-muted">추정</span> : null}
                 </Chip>
                 {summarizeEntry(entry).map((part) => (

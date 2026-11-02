@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { formatLocalTime, formatShortDate } from "@/lib/domain/datetime";
+import { formatEntryTime, formatShortDate } from "@/lib/domain/datetime";
 import { summarizeEntry } from "@/lib/domain/entry-summary";
 import type { LogEntry } from "@/lib/domain/types";
 import { kindLabel } from "@/lib/domain/kinds";
@@ -48,7 +48,7 @@ const EvidenceCard = ({
               <ListRow
                 time={
                   <>
-                    {formatShortDate(entry.occurredAt, timeZone)} {formatLocalTime(entry.occurredAt, timeZone)}
+                    {formatShortDate(entry.occurredAt, timeZone)} {formatEntryTime(entry, timeZone)}
                     {entry.timePrecision === "estimated" ? (
                       <span className="block text-[11px] leading-none">추정</span>
                     ) : null}

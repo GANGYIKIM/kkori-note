@@ -124,7 +124,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto">
+        <div className="flex min-h-0 flex-1 flex-col-reverse overflow-y-auto">
           <main className="mx-auto w-[92%] space-y-4 pt-2 pb-4 lg:w-full lg:pb-8">
             {entries.length === 0 ? (
               <EmptyState

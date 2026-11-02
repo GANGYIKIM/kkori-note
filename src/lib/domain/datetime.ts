@@ -21,6 +21,11 @@ const formatLocalTime = (iso: string, timeZone: string): string => {
   );
 };
 
+/** 기록의 시각 자리. 하루 전체 기록은 "종일" */
+const formatEntryTime = (entry: { occurredAt: string; timePrecision: string }, timeZone: string): string => {
+  return entry.timePrecision === "day" ? "종일" : formatLocalTime(entry.occurredAt, timeZone);
+};
+
 /** 그 순간의 시간대 오프셋(분). 현지 시각 − UTC */
 const offsetMinutes = (epochMs: number, timeZone: string): number => {
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -92,12 +97,17 @@ const elapsedMinutes = (startIso: string, nowIso: string): number => {
   return Math.max(0, Math.floor((Date.parse(nowIso) - Date.parse(startIso)) / 60_000));
 };
 
-/** occurredAt을 가진 항목을 현지 날짜별로 묶는다. 날짜와 항목 모두 최신이 먼저 */
-const groupByLocalDate = <T extends { occurredAt: string }>(
+/** occurredAt을 가진 항목을 현지 날짜별로 묶는다. 날짜와 항목 모두 오래된 것이 먼저, 하루 전체 기록은 그날 맨 뒤 */
+const groupByLocalDate = <T extends { occurredAt: string; timePrecision?: string }>(
   items: readonly T[],
   timeZone: string,
 ): { dateKey: string; items: T[] }[] => {
-  const sorted = [...items].sort((a, b) => b.occurredAt.localeCompare(a.occurredAt));
+  const sortKey = (item: T) => [localDateKey(item.occurredAt, timeZone), item.timePrecision === "day" ? 1 : 0] as const;
+  const sorted = [...items].sort((a, b) => {
+    const [dateA, dayA] = sortKey(a);
+    const [dateB, dayB] = sortKey(b);
+    return dateA.localeCompare(dateB) || dayA - dayB || a.occurredAt.localeCompare(b.occurredAt);
+  });
   const groups: { dateKey: string; items: T[] }[] = [];
   for (const item of sorted) {
     const key = localDateKey(item.occurredAt, timeZone);
@@ -111,6 +121,7 @@ const groupByLocalDate = <T extends { occurredAt: string }>(
 export {
   localDateKey,
   formatLocalTime,
+  formatEntryTime,
   startOfLocalDay,
   formatDateHeading,
   formatDuration,

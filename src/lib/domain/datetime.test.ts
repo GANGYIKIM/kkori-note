@@ -3,6 +3,7 @@ import {
   elapsedMinutes,
   formatDateHeading,
   formatDuration,
+  formatEntryTime,
   formatLocalTime,
   formatShortDate,
   groupByLocalDate,
@@ -67,16 +68,32 @@ describe("elapsedMinutes", () => {
 });
 
 describe("groupByLocalDate", () => {
-  it("서울 날짜로 묶고 최신이 먼저 온다", () => {
+  it("서울 날짜로 묶고 날짜와 항목 모두 오래된 것이 먼저 온다", () => {
     const items = [
+      { id: "c", occurredAt: "2026-10-29T01:00:00.000Z" }, // 10/29 10:00 KST
       { id: "a", occurredAt: "2026-10-28T14:50:00.000Z" }, // 10/28 23:50 KST
       { id: "b", occurredAt: "2026-10-28T15:10:00.000Z" }, // 10/29 00:10 KST
-      { id: "c", occurredAt: "2026-10-29T01:00:00.000Z" }, // 10/29 10:00 KST
     ];
     const groups = groupByLocalDate(items, SEOUL);
-    expect(groups.map((g) => g.dateKey)).toEqual(["2026-10-29", "2026-10-28"]);
-    expect(groups[0].items.map((i) => i.id)).toEqual(["c", "b"]);
-    expect(groups[1].items.map((i) => i.id)).toEqual(["a"]);
+    expect(groups.map((g) => g.dateKey)).toEqual(["2026-10-28", "2026-10-29"]);
+    expect(groups[0].items.map((i) => i.id)).toEqual(["a"]);
+    expect(groups[1].items.map((i) => i.id)).toEqual(["b", "c"]);
+  });
+
+  it("하루 전체 기록은 그날 맨 뒤에 온다", () => {
+    const items = [
+      { id: "day", occurredAt: "2026-10-28T15:00:00.000Z", timePrecision: "day" }, // 10/29 0시
+      { id: "late", occurredAt: "2026-10-29T12:00:00.000Z", timePrecision: "exact" }, // 10/29 21:00 KST
+      { id: "early", occurredAt: "2026-10-28T23:00:00.000Z", timePrecision: "estimated" }, // 10/29 08:00 KST
+    ];
+    expect(groupByLocalDate(items, SEOUL)[0].items.map((i) => i.id)).toEqual(["early", "late", "day"]);
+  });
+});
+
+describe("formatEntryTime", () => {
+  it("하루 전체 기록은 종일, 아니면 현지 HH:mm", () => {
+    expect(formatEntryTime({ occurredAt: "2026-10-28T15:00:00.000Z", timePrecision: "day" }, SEOUL)).toBe("종일");
+    expect(formatEntryTime({ occurredAt: "2026-10-29T10:05:00.000Z", timePrecision: "exact" }, SEOUL)).toBe("19:05");
   });
 });
 

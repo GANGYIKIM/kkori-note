@@ -15,6 +15,27 @@ const variants: Variant[] = [
     ),
   },
   {
+    name: "하루 전체 기록 (종일, 그날 맨 아래)",
+    render: () => (
+      <DateGroupedList
+        entries={[
+          {
+            ...map["e-poop-soft"],
+            id: "day-poop",
+            occurredAt: "2026-10-28T15:00:00.000Z",
+            timePrecision: "day",
+            values: { count: 3 },
+          },
+          map["e-meal"],
+          map["e-poop-soft"],
+        ]}
+        nowIso={MOCK_NOW}
+        timeZone={tz}
+        onSelect={() => {}}
+      />
+    ),
+  },
+  {
     name: "여러 날",
     render: () => (
       <DateGroupedList entries={MOCK_ENTRIES.slice(8, 15)} nowIso={MOCK_NOW} timeZone={tz} onSelect={() => {}} />

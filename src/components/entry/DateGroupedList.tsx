@@ -1,4 +1,4 @@
-import { formatDateHeading, formatLocalTime, groupByLocalDate } from "@/lib/domain/datetime";
+import { formatDateHeading, formatEntryTime, groupByLocalDate } from "@/lib/domain/datetime";
 import { summarizeEntry } from "@/lib/domain/entry-summary";
 import type { LogEntry } from "@/lib/domain/types";
 import { kindLabel } from "@/lib/domain/kinds";
@@ -6,7 +6,7 @@ import { kindStyle } from "@/lib/domain/values";
 import { ListRow } from "@/components/common/ListRow";
 import { Tag } from "@/components/common/Tag";
 
-/** 메인 화면의 기록 목록. 현지 날짜별로 묶고 최신이 위 (PRD R0, R2) */
+/** 메인 화면의 기록 목록. 현지 날짜별로 묶고 오래된 것이 위, 하루 전체 기록은 그날 맨 아래 (PRD R0-2, R11) */
 const DateGroupedList = ({
   entries,
   nowIso,
@@ -33,7 +33,7 @@ const DateGroupedList = ({
                 <ListRow
                   time={
                     <>
-                      {formatLocalTime(entry.occurredAt, timeZone)}
+                      {formatEntryTime(entry, timeZone)}
                       {entry.timePrecision === "estimated" ? (
                         <span className="block text-[11px] leading-none">추정</span>
                       ) : null}
