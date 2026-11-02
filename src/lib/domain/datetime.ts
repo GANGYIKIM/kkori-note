@@ -21,6 +21,31 @@ const formatLocalTime = (iso: string, timeZone: string): string => {
   );
 };
 
+/** 그 순간의 시간대 오프셋(분). 현지 시각 − UTC */
+const offsetMinutes = (epochMs: number, timeZone: string): number => {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).formatToParts(new Date(epochMs));
+  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
+  const asUtc = Date.UTC(get("year"), get("month") - 1, get("day"), get("hour"), get("minute"), get("second"));
+  return Math.round((asUtc - Math.floor(epochMs / 1000) * 1000) / 60_000);
+};
+
+/** 현지 시간대의 그날 0시를 UTC ISO 문자열로 */
+const startOfLocalDay = (nowIso: string, timeZone: string): string => {
+  const midnightAsUtc = Date.parse(`${localDateKey(nowIso, timeZone)}T00:00:00.000Z`);
+  const guess = midnightAsUtc - offsetMinutes(midnightAsUtc, timeZone) * 60_000;
+  // 0시 전후로 오프셋이 바뀌는 날(서머타임)을 위해 한 번 더 맞춘다
+  return new Date(midnightAsUtc - offsetMinutes(guess, timeZone) * 60_000).toISOString();
+};
+
 /** 날짜 키를 하루씩 옮긴다. 날짜 키는 달력 날짜라 시간대와 무관하게 UTC로 계산해도 된다 */
 const shiftDateKey = (dateKey: string, days: number): string => {
   const date = new Date(`${dateKey}T00:00:00.000Z`);
@@ -86,6 +111,7 @@ const groupByLocalDate = <T extends { occurredAt: string }>(
 export {
   localDateKey,
   formatLocalTime,
+  startOfLocalDay,
   formatDateHeading,
   formatDuration,
   formatShortDate,

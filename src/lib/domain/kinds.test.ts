@@ -6,6 +6,7 @@ import {
   findKind,
   isEpisodeKind,
   kindLabel,
+  missingCoreFields,
   optionLabel,
   type KindDef,
 } from "./kinds";
@@ -95,5 +96,27 @@ describe("isEpisodeKind", () => {
     expect(isEpisodeKind("seizure")).toBe(true);
     expect(isEpisodeKind("poop")).toBe(false);
     expect(isEpisodeKind("removed_kind")).toBe(false);
+  });
+});
+
+describe("핵심 항목과 기본값", () => {
+  it("정의의 core·askHint·defaultValue가 정해진 대로다", () => {
+    const marked = DEFAULT_KINDS.flatMap((k) =>
+      k.fields
+        .filter((f) => f.core || f.askHint !== undefined || (f.type === "number" && f.defaultValue !== undefined))
+        .map((f) => [k.id, f.id, f.core, f.askHint, f.type === "number" ? f.defaultValue : undefined]),
+    );
+    expect(marked).toEqual([
+      ["poop", "stoolState", true, "상태(무른지, 딱딱한지)", undefined],
+      ["poop", "count", false, undefined, 1],
+      ["picked_up", "riskFood", true, "무엇을 먹었는지", undefined],
+    ]);
+  });
+
+  it("missingCoreFields는 값이 없는 핵심 항목만 준다", () => {
+    expect(missingCoreFields("poop", {}).map((f) => f.id)).toEqual(["stoolState"]);
+    expect(missingCoreFields("poop", { stoolState: "soft" })).toEqual([]);
+    expect(missingCoreFields("meal", {})).toEqual([]);
+    expect(missingCoreFields("unknown_kind", {})).toEqual([]);
   });
 });

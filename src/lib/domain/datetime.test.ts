@@ -7,6 +7,7 @@ import {
   formatShortDate,
   groupByLocalDate,
   localDateKey,
+  startOfLocalDay,
 } from "./datetime";
 
 const SEOUL = "Asia/Seoul";
@@ -76,5 +77,19 @@ describe("groupByLocalDate", () => {
     expect(groups.map((g) => g.dateKey)).toEqual(["2026-10-29", "2026-10-28"]);
     expect(groups[0].items.map((i) => i.id)).toEqual(["c", "b"]);
     expect(groups[1].items.map((i) => i.id)).toEqual(["a"]);
+  });
+});
+
+describe("startOfLocalDay", () => {
+  it("현지 시간대의 그날 0시를 UTC로 준다", () => {
+    expect(startOfLocalDay("2026-11-02T05:00:00.000Z", SEOUL)).toBe("2026-11-01T15:00:00.000Z");
+    // 2026-11-01 15:30 UTC = 2026-11-02 00:30 KST
+    expect(startOfLocalDay("2026-11-01T15:30:00.000Z", SEOUL)).toBe("2026-11-01T15:00:00.000Z");
+    expect(startOfLocalDay("2026-11-02T05:00:00.000Z", "UTC")).toBe("2026-11-02T00:00:00.000Z");
+  });
+
+  it("서머타임이 바뀌는 날에도 0시를 준다", () => {
+    // 2026-03-08 뉴욕은 02:00에 EST(-5) → EDT(-4). 0시는 EST
+    expect(startOfLocalDay("2026-03-08T18:00:00.000Z", "America/New_York")).toBe("2026-03-08T05:00:00.000Z");
   });
 });

@@ -13,11 +13,23 @@ interface FieldBase {
   label: string;
   /** 위험 판단(R6)과 집계(R4)가 읽는 항목. 편집 기능이 생겨도 지울 수 없다 */
   system: boolean;
+  /** 핵심 항목(R11). 비어 있으면 채팅 입력에서 LLM으로 채워 보고, 그래도 비면 응답에서 묻는다 */
+  core: boolean;
+  /** 핵심 항목이 비었을 때 응답에 붙는 말. 조사 없이 쓴다 */
+  askHint?: string;
 }
 
 type FieldDef =
   | (FieldBase & { type: "choice"; options: Option[] })
-  | (FieldBase & { type: "number"; min: number; max: number; integer: boolean; unit: string })
+  | (FieldBase & {
+      type: "number";
+      min: number;
+      max: number;
+      integer: boolean;
+      unit: string;
+      /** 채팅에서 만든 기록에 이 항목이 비어 있으면 넣는 값 */
+      defaultValue?: number;
+    })
   | (FieldBase & { type: "text"; maxLength: number });
 
 interface KindDef {
@@ -31,13 +43,14 @@ interface KindDef {
 
 type EntryValues = Record<string, string | number>;
 
-const detail: FieldDef = { id: "detail", label: "내용", type: "text", maxLength: 200, system: false };
+const detail: FieldDef = { id: "detail", label: "내용", type: "text", maxLength: 200, system: false, core: false };
 
 const intensity: FieldDef = {
   id: "intensity",
   label: "강도",
   type: "choice",
   system: true,
+  core: false,
   options: [
     { id: "low", label: "약" },
     { id: "medium", label: "중" },
@@ -57,6 +70,8 @@ const DEFAULT_KINDS: readonly KindDef[] = [
         label: "상태",
         type: "choice",
         system: true,
+        core: true,
+        askHint: "상태(무른지, 딱딱한지)",
         options: [
           { id: "hard", label: "딱딱함" },
           { id: "normal", label: "정상" },
@@ -66,7 +81,18 @@ const DEFAULT_KINDS: readonly KindDef[] = [
           { id: "other", label: "기타" },
         ],
       },
-      { id: "count", label: "횟수", type: "number", min: 1, max: 10, integer: true, unit: "회", system: true },
+      {
+        id: "count",
+        label: "횟수",
+        type: "number",
+        min: 1,
+        max: 10,
+        integer: true,
+        unit: "회",
+        system: true,
+        core: false,
+        defaultValue: 1,
+      },
       detail,
     ],
   },
@@ -84,6 +110,8 @@ const DEFAULT_KINDS: readonly KindDef[] = [
         label: "위험 음식",
         type: "choice",
         system: true,
+        core: true,
+        askHint: "무엇을 먹었는지",
         options: [
           { id: "chocolate", label: "초콜릿" },
           { id: "grape_raisin", label: "포도·건포도" },
@@ -97,6 +125,7 @@ const DEFAULT_KINDS: readonly KindDef[] = [
         label: "초콜릿 종류",
         type: "choice",
         system: true,
+        core: false,
         options: [
           { id: "white", label: "화이트" },
           { id: "milk", label: "밀크" },
@@ -105,7 +134,17 @@ const DEFAULT_KINDS: readonly KindDef[] = [
           { id: "unknown", label: "종류 모름" },
         ],
       },
-      { id: "amountG", label: "먹은 양", type: "number", min: 0, max: 5000, integer: true, unit: "g", system: true },
+      {
+        id: "amountG",
+        label: "먹은 양",
+        type: "number",
+        min: 0,
+        max: 5000,
+        integer: true,
+        unit: "g",
+        system: true,
+        core: false,
+      },
       detail,
     ],
   },
@@ -157,6 +196,11 @@ const isValidValue = (field: FieldDef, value: string | number): boolean => {
   }
 };
 
+/** 값이 없는 핵심 항목. 정의에 없는 종류면 빈 목록 */
+const missingCoreFields = (kindId: string, values: EntryValues): FieldDef[] => {
+  return findKind(kindId)?.fields.filter((f) => f.core && values[f.id] === undefined) ?? [];
+};
+
 /** 새로 저장하기 전에 정의로 값을 검사한다. 저장된 기록을 읽을 때는 쓰지 않는다 (ADR-0012) */
 const checkValues = (
   kind: KindDef,
@@ -171,5 +215,15 @@ const checkValues = (
   return invalidFieldIds.length === 0 ? { ok: true, values } : { ok: false, invalidFieldIds };
 };
 
-export { DEFAULT_KINDS, findKind, kindLabel, isEpisodeKind, findField, fieldLabel, optionLabel, checkValues };
+export {
+  DEFAULT_KINDS,
+  findKind,
+  kindLabel,
+  isEpisodeKind,
+  findField,
+  fieldLabel,
+  optionLabel,
+  missingCoreFields,
+  checkValues,
+};
 export type { KindDef, FieldDef, Option, EntryValues };
