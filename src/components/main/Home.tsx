@@ -110,14 +110,14 @@ const Home = () => {
   // 넓은 화면(lg 이상)은 왼쪽 기록 목록 + 오른쪽 채팅 패널, 좁은 화면은 입력창을 누르면 채팅 시트가 열린다
   return (
     <div className="lg:grid lg:h-dvh lg:grid-cols-[minmax(0,1fr)_420px]">
-      <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col px-4 lg:min-h-0 lg:max-w-none lg:overflow-y-auto">
-        <div className="sticky top-0 z-10 -mx-4 bg-background/95 px-4 backdrop-blur-sm">
+      <div className="mx-auto flex min-h-dvh w-full max-w-md flex-col lg:min-h-0 lg:max-w-none lg:overflow-y-auto">
+        <div className="sticky top-0 z-10 bg-background/95 px-4 backdrop-blur-sm">
           <div className="lg:mx-auto lg:max-w-2xl">
             <AppHeader dogName={MOCK_DOG.name} />
           </div>
         </div>
 
-        <main className="w-full flex-1 space-y-4 pt-2 pb-28 lg:mx-auto lg:max-w-2xl lg:pb-8">
+        <main className="w-full flex-1 space-y-4 px-4 pt-2 pb-20 lg:mx-auto lg:max-w-2xl lg:pb-8">
           <OngoingEpisodeBar episodes={ongoing} nowIso={MOCK_NOW} onClose={closeEpisode} />
           {entries.length === 0 ? (
             <EmptyState
