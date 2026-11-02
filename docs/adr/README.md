@@ -33,3 +33,5 @@
 | [0011](0011-r-scoped-prd-and-requirement-ids.md) | PRD는 R마다 파일 하나. 하위 요구사항 `R<n>-k`·수락 기준 `R<n>-k.m` 번호, R 문서의 요구사항별 개발 표, 검사 테스트로 빈 곳을 막는다 | Accepted | 없음 |
 | [0012](0012-kind-definitions-and-entry-shape.md) | 기록은 공통 칸 + `kindId` + `values`, 종류 정의는 코드에. 시각 정확도는 `timePrecision`(정확·추정·하루 전체) | Accepted | R1, R11 |
 | [0013](0013-chat-message-block-storage.md) | 채팅 메시지는 블록 단위 `ChatMessage`로 저장하고 `ConsultMessage`는 없앤다 | Accepted | R1 |
+| [0014](0014-responsive-width-breakpoints.md) | 모바일 ~767 · 태블릿 768~1023 · PC 1024~. 폭은 %, 최대 폭은 px. 1단 92%, PC 2단 92%·최대 1200px, 채팅 40%·최대 420px | Accepted | R0 |
+| [0015](0015-custom-overlay-scrollbar.md) | 기본 스크롤바를 숨기고 직접 만든 오버레이 막대를 쓴다. 라이브러리 없이 | Accepted | R0 |
