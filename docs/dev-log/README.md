@@ -36,3 +36,4 @@ R 문서와 R에 속하지 않는 기록이다. 빠뜨리면 `tests/docs-index.t
 | [2026-10-29](2026-10-29-wide-screen-layout.md) | R0 | 1024px 이상에서 왼쪽 기록 목록, 오른쪽 채팅 고정 (R 폴더 이전 형식) |
 | [2026-10-30](2026-10-30-planning-commands.md) | 없음 | `/planning`·`/next-plan`과 R 단위 dev-log. `/next-plan` 비용 측정 포함 |
 | [2026-11-01](2026-11-01-r-scoped-prd.md) | 없음 | PRD를 R별 파일로 나누고, 하위 요구사항 번호와 요구사항 검사 테스트를 둠 |
+| [2026-11-02](2026-11-02-parse-benchmark.md) | R1, R8 | 칩 만들기 방식 비교(코드만 / LLM만 / 코드 + LLM)와 `npm run metrics`. M6, M7 |
